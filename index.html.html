@@ -1,0 +1,3234 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5f7f2">
+<title>家有計畫｜家庭學習與收支管理</title>
+<style>
+:root {
+  --bg: #f5f7f2;
+  --paper: #ffffff;
+  --ink: #26352e;
+  --muted: #718078;
+  --line: #e3e9e2;
+  --green: #356b50;
+  --green-hover: #2b5841;
+  --green2: #e7f1e9;
+  --gold: #d99c46;
+  --gold-bg: #fff4e0;
+  --red: #bf6258;
+  --red-bg: #faeae7;
+  --blue: #527d9b;
+  --blue-bg: #eaf1f6;
+  --purple: #6c5ce7;
+  --purple-bg: #f1effd;
+  --shadow: 0 8px 26px rgba(43, 69, 51, .06);
+  --radius: 18px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Microsoft JhengHei", sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; transition: all 0.16s ease; }
+button:active { transform: scale(0.98); }
+
+.app { max-width: 1280px; margin: auto; padding: 20px; }
+
+/* Header & Role Switcher */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.logo {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--green), #488667);
+  color: white;
+  border-radius: 15px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  box-shadow: 0 6px 16px rgba(53, 107, 80, 0.22);
+}
+h1 { font-size: 21px; margin: 0; letter-spacing: .02em; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.badge-title {
+  font-size: 11px;
+  background: var(--green2);
+  color: var(--green);
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+.sub { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+.role-switch-wrap {
+  display: flex;
+  align-items: center;
+  background: #e9efe9;
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid #d5e0d5;
+}
+.role-btn {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 7px 15px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 750;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.role-btn.active.student {
+  background: var(--green);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(53, 107, 80, 0.25);
+}
+.role-btn.active.parent {
+  background: var(--blue);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(82, 125, 155, 0.25);
+}
+.lock-indicator {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.2);
+}
+
+.header-actions { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
+
+/* Buttons */
+.btn {
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--ink);
+  padding: 9px 13px;
+  border-radius: 12px;
+  font-weight: 650;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn:hover { background: #f9fbf8; border-color: #cdd8cc; }
+.btn.primary {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+  box-shadow: 0 4px 12px rgba(53, 107, 80, 0.18);
+}
+.btn.primary:hover { background: var(--green-hover); }
+.btn.soft {
+  background: var(--green2);
+  border-color: #d0e4d4;
+  color: var(--green);
+}
+.btn.soft:hover { background: #dcebe0; }
+.btn.blue {
+  background: var(--blue-bg);
+  border-color: #cfe0ec;
+  color: var(--blue);
+}
+.btn.blue:hover { background: #dfeaf3; }
+.btn.danger { color: var(--red); }
+.btn.danger:hover { background: var(--red-bg); border-color: #f0cdc8; }
+
+/* Layout & Nav */
+.layout { display: grid; grid-template-columns: 225px minmax(0, 1fr); gap: 20px; }
+nav {
+  background: var(--paper);
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  height: max-content;
+  position: sticky;
+  top: 16px;
+  box-shadow: var(--shadow);
+}
+.navbtn {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  text-align: left;
+  padding: 11px 12px;
+  border-radius: 12px;
+  margin: 2px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 650;
+  font-size: 14px;
+}
+.navbtn-left { display: flex; align-items: center; gap: 10px; }
+.navbtn:hover { background: #f6f9f6; color: var(--ink); }
+.navbtn.active { background: var(--green2); color: var(--green); }
+.navicon { width: 22px; text-align: center; font-size: 17px; }
+.navnote {
+  border-top: 1px solid var(--line);
+  padding: 12px 9px 4px;
+  margin-top: 12px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+/* Role Banner */
+.role-banner {
+  padding: 12px 16px;
+  border-radius: 15px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+.role-banner.student {
+  background: linear-gradient(90deg, #e7f1e9 0%, #f4f8f4 100%);
+  border: 1px solid #cde0d1;
+  color: #244d38;
+}
+.role-banner.parent {
+  background: linear-gradient(90deg, #eaf1f6 0%, #f5f8fb 100%);
+  border: 1px solid #cddde9;
+  color: #2c4c63;
+}
+
+/* 3-Day Precision Radar */
+.radar-box {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 17px 19px;
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+}
+.radar-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+.radar-col {
+  background: #fafcf9;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 13px;
+}
+.radar-col.today {
+  background: linear-gradient(180deg, #f3f9f4 0%, #ffffff 100%);
+  border-color: #bdd5c3;
+}
+.radar-col-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+  font-weight: 750;
+  font-size: 13.5px;
+}
+.radar-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 12.5px;
+  border-bottom: 1px dashed #ebf0ea;
+}
+.radar-item:last-child { border-bottom: 0; }
+
+/* Stats Cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.stat {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 15px 17px;
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+.stathead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  gap: 6px;
+}
+.stat-icon { font-size: 18px; }
+.statnum {
+  font-size: 25px;
+  font-weight: 780;
+  margin: 7px 0 2px;
+  letter-spacing: -.03em;
+}
+.statdesc { font-size: 11.5px; color: var(--muted); }
+
+/* Panels & Grid */
+.panelgrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
+  gap: 14px;
+}
+.panel {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 19px;
+  box-shadow: var(--shadow);
+  min-width: 0;
+  margin-bottom: 14px;
+}
+.panelhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.panel h3 { margin: 0; font-size: 16px; display: flex; align-items: center; gap: 7px; }
+.smallmuted { color: var(--muted); font-size: 12px; }
+.linkbtn {
+  border: 0;
+  background: transparent;
+  color: var(--green);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 5px 8px;
+  border-radius: 8px;
+}
+.linkbtn:hover { background: var(--green2); }
+
+/* Lists & Tags */
+.list { display: flex; flex-direction: column; gap: 8px; }
+.listitem {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 0;
+  border-bottom: 1px solid #edf0eb;
+}
+.listitem:last-child { border-bottom: 0; padding-bottom: 0; }
+.datebox {
+  min-width: 52px;
+  text-align: center;
+  background: #f1f5ef;
+  border-radius: 11px;
+  padding: 6px 4px;
+  color: var(--green);
+  font-weight: 750;
+  font-size: 13px;
+}
+.datebox span { display: block; font-size: 10px; font-weight: 600; color: var(--muted); }
+.itemmain { min-width: 0; flex: 1; }
+.itemtitle { font-size: 13.5px; font-weight: 700; overflow-wrap: anywhere; }
+.itemmeta { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #f1f3ef;
+  color: #657168;
+  white-space: nowrap;
+}
+.tag.red { background: var(--red-bg); color: #a94f47; }
+.tag.gold { background: var(--gold-bg); color: #99651e; }
+.tag.green { background: var(--green2); color: var(--green); }
+.tag.blue { background: var(--blue-bg); color: var(--blue); }
+.tag.purple { background: var(--purple-bg); color: var(--purple); }
+
+.empty {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  background: #fafbf9;
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+}
+
+.view { display: none; animation: fadeIn 0.2s ease; }
+.view.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+
+.sectiontop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 17px;
+  flex-wrap: wrap;
+}
+.sectiontop h2 { margin: 0; font-size: 23px; }
+.sectiontop p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+
+/* Filter & Form Controls */
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 13px; align-items: center; }
+.toolbar input, .toolbar select { max-width: 220px; }
+input, select, textarea {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #dce4db;
+  border-radius: 10px;
+  padding: 9px 11px;
+  color: var(--ink);
+  outline: none;
+  font-size: 13.5px;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: #6e9b7d;
+  box-shadow: 0 0 0 3px #e6f0e8;
+}
+label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #59685f;
+  display: block;
+  margin-bottom: 5px;
+}
+.formgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.field.full { grid-column: 1 / -1; }
+.formactions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; flex-wrap: wrap; }
+
+/* Pills & 1-Second Quick Expense Pad */
+.pill-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.pill-btn {
+  border: 1px solid var(--line);
+  background: #f8faf7;
+  color: var(--ink);
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 650;
+}
+.pill-btn:hover { background: var(--green2); border-color: #bdd5c3; color: var(--green); }
+.pill-btn.active { background: var(--green); border-color: var(--green); color: #fff; }
+
+.quick-pad {
+  background: linear-gradient(135deg, #f2f8f3 0%, #ffffff 100%);
+  border: 1.5px solid #cbe0cf;
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.quick-pad-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.quick-pad-title {
+  font-size: 14px;
+  font-weight: 780;
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.privacy-pill {
+  font-size: 11px;
+  background: #e3efe6;
+  color: #28593f;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.quick-chips-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.chip-action {
+  border: 1px solid #cfe0d2;
+  background: #fff;
+  color: var(--ink);
+  padding: 8px 13px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+.chip-action:hover {
+  border-color: var(--green);
+  background: var(--green2);
+  transform: translateY(-2px);
+}
+.chip-action .amt-neg { color: var(--red); font-weight: 800; }
+.chip-action .amt-pos { color: var(--green); font-weight: 800; }
+
+/* Custom Instant Input Bar inside Quick Pad */
+.instant-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #d5e3d7;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.instant-bar select { width: auto; min-width: 115px; padding: 7px 10px; font-size: 12.5px; }
+.instant-bar input { width: auto; flex: 1; min-width: 120px; padding: 7px 10px; font-size: 12.5px; }
+
+/* Privacy Shield Card for Parent View */
+.privacy-shield-card {
+  background: linear-gradient(135deg, #eef4f8 0%, #ffffff 100%);
+  border: 1px solid #cbdce9;
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.privacy-shield-icon {
+  font-size: 24px;
+  background: #fff;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 8px rgba(82,125,155,0.12);
+  flex-shrink: 0;
+}
+
+/* Stacked Percentage Bar for Parent Privacy View */
+.pct-stack-bar {
+  height: 18px;
+  border-radius: 999px;
+  background: #edf1eb;
+  overflow: hidden;
+  display: flex;
+  margin: 14px 0;
+}
+.pct-segment {
+  height: 100%;
+  transition: width 0.35s ease;
+}
+
+/* Weekly Schedule Grid */
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(135px, 1fr));
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.day-col {
+  background: #fafcf9;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  padding: 10px;
+  min-height: 220px;
+}
+.day-col-head {
+  text-align: center;
+  font-weight: 750;
+  font-size: 13px;
+  padding-bottom: 7px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+  color: var(--green);
+}
+.sched-card {
+  background: #fff;
+  border: 1px solid #dce5dc;
+  border-left: 3.5px solid var(--green);
+  border-radius: 10px;
+  padding: 8px;
+  margin-bottom: 7px;
+  font-size: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+.sched-card.cram { border-left-color: var(--gold); }
+.sched-card.talent { border-left-color: var(--purple); }
+.sched-card.self { border-left-color: var(--blue); }
+
+/* Study Timer Box */
+.timer-box {
+  background: linear-gradient(135deg, #26352e 0%, #356b50 100%);
+  color: #fff;
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.timer-digits {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tables & Bars */
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 580px; }
+th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { background: #f7f9f6; color: var(--muted); font-size: 11.5px; font-weight: 700; }
+tr:last-child td { border-bottom: 0; }
+tr:hover td { background: #fcfdfc; }
+.rowactions { display: flex; gap: 5px; }
+.mini {
+  padding: 5px 9px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: white;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.mini:hover { background: #f3f6f2; }
+.mini.del { color: var(--red); }
+.mini.del:hover { background: var(--red-bg); border-color: #f2c8c2; }
+
+.monthbar { display: flex; align-items: center; gap: 10px; }
+.monthbar input { width: auto; max-width: 165px; }
+.moneypos { color: var(--green); font-weight: 750; }
+.moneyneg { color: var(--red); font-weight: 750; }
+.barrow {
+  display: grid;
+  grid-template-columns: 110px 1fr 68px;
+  gap: 10px;
+  align-items: center;
+  margin: 12px 0;
+  font-size: 13px;
+}
+.bartrack { height: 10px; background: #edf1eb; border-radius: 999px; overflow: hidden; }
+.barfill { height: 100%; background: #6d9d7d; border-radius: 999px; transition: width 0.35s ease; }
+.notice {
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: #f4f7f1;
+  color: #5b6b61;
+  font-size: 12px;
+  margin: 12px 0;
+  border-left: 3px solid var(--green);
+}
+
+/* Savings Wish Card */
+.wish-card {
+  background: linear-gradient(135deg, #f3f9f4 0%, #ffffff 100%);
+  border: 1px solid #d4e3d7;
+  border-radius: 16px;
+  padding: 15px 17px;
+  margin-bottom: 14px;
+}
+.wish-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+.wish-title { font-weight: 750; font-size: 14px; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.wish-meta { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; margin-top: 6px; flex-wrap: wrap; gap: 6px; }
+
+/* Line Chart Area */
+.chart-container {
+  position: relative;
+  width: 100%;
+  background: #fafcf9;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 12px 10px;
+  margin-top: 10px;
+}
+.chart-svg { width: 100%; height: 265px; display: block; overflow: visible; }
+.chart-legend { display: flex; gap: 16px; justify-content: flex-end; font-size: 12px; color: var(--muted); margin-bottom: 6px; flex-wrap: wrap; }
+.legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.legend-dash { width: 16px; height: 2px; border-top: 2px dashed var(--gold); display: inline-block; }
+
+/* Modals */
+.modalback {
+  position: fixed;
+  inset: 0;
+  background: rgba(25, 40, 31, .44);
+  backdrop-filter: blur(2px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 50;
+}
+.modalback.open { display: flex; }
+.modal {
+  background: white;
+  width: min(620px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 25px 70px rgba(21, 38, 28, 0.25);
+  animation: modalPop 0.18s ease;
+}
+@keyframes modalPop { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+.modalhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.modalhead h3 { margin: 0; font-size: 18px; }
+.close {
+  border: 0;
+  background: #f2f5f0;
+  border-radius: 10px;
+  width: 34px;
+  height: 34px;
+  font-size: 20px;
+  color: var(--ink);
+}
+.close:hover { background: #e5ebe3; }
+
+.quick-hub-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.hub-card {
+  border: 1px solid var(--line);
+  background: #fafcf9;
+  border-radius: 16px;
+  padding: 15px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.hub-card:hover { border-color: var(--green); background: var(--green2); transform: translateY(-2px); }
+.hub-icon {
+  font-size: 22px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+.hub-title { font-weight: 750; font-size: 14.5px; color: var(--ink); }
+.hub-desc { font-size: 12px; color: var(--muted); }
+
+/* Toast Notification */
+.toast-wrap {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 360px;
+}
+.toast {
+  background: var(--ink);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 13px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  animation: slideUp 0.22s ease;
+}
+.toast button {
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  border: 0;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+footer { padding: 20px 0 4px; color: var(--muted); font-size: 11.5px; text-align: center; }
+
+@media(max-width: 960px) {
+  .layout { grid-template-columns: 1fr; }
+  nav {
+    position: sticky;
+    top: 8px;
+    z-index: 20;
+    display: flex;
+    overflow-x: auto;
+    padding: 7px;
+    gap: 4px;
+  }
+  .navbtn { width: auto; white-space: nowrap; flex: 0 0 auto; padding: 9px 12px; }
+  .navnote { display: none; }
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .panelgrid, .radar-grid { grid-template-columns: 1fr; }
+}
+@media(max-width: 560px) {
+  .app { padding: 12px; }
+  h1 { font-size: 18px; }
+  .header-actions .btn.hide-sm { display: none; }
+  .cards { gap: 8px; }
+  .stat { padding: 13px; }
+  .statnum { font-size: 21px; }
+  .panel { padding: 14px; }
+  .formgrid, .quick-hub-grid { grid-template-columns: 1fr; }
+  .field.full { grid-column: auto; }
+  .barrow { grid-template-columns: 88px 1fr 56px; gap: 7px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="logo">⌂</div>
+      <div>
+        <h1>家有計畫 <span class="badge-title" id="headerFamilyBadge">雙視角隱私協作版</span></h1>
+        <div class="sub">整週課表與才藝 × 今明後預警 × 隱私快記帳本</div>
+      </div>
+    </div>
+
+    <!-- 雙視角切換器 (含學生隱私鎖狀態) -->
+    <div class="role-switch-wrap" title="切換學生與家長視角，家長視角僅顯示支出趴數(%)，不顯示消費細項">
+      <button type="button" class="role-btn active student" id="roleStudentBtn">
+        🎒 學生視角 <span class="lock-indicator" id="pinStatusBadge">🔓</span>
+      </button>
+      <button type="button" class="role-btn parent" id="roleParentBtn">
+        👨‍👩‍👧 家長視角
+      </button>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn blue" id="smartImportBtn" title="免打字貼上聯絡簿/補習班文字，或匯入匯出 .ics 行事曆">📥 智慧匯入/行事曆</button>
+      <button class="btn soft" id="lineCardBtn" title="產生 LINE 回報卡與家長專用隱私脫敏同步碼">💬 LINE 回報卡</button>
+      <button class="btn hide-sm" id="demoDataBtn">✨ 範例資料</button>
+      <button class="btn primary" id="quickAdd">＋ 快速紀錄</button>
+      <input type="file" id="importFile" accept=".json,application/json" hidden>
+      <input type="file" id="icsFile" accept=".ics,text/calendar" hidden>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav id="nav">
+      <button class="navbtn active" data-view="dashboard"><span class="navbtn-left"><span class="navicon">▦</span>家庭總覽</span></button>
+      <button class="navbtn" data-view="schedule"><span class="navbtn-left"><span class="navicon">🗓</span>整週課表與才藝</span></button>
+      <button class="navbtn" data-view="school"><span class="navbtn-left"><span class="navicon">✎</span>考試與作業</span></button>
+      <button class="navbtn" data-view="study"><span class="navbtn-left"><span class="navicon">⏱</span>讀書與目標</span></button>
+      <button class="navbtn" data-view="grades"><span class="navbtn-left"><span class="navicon">📈</span>成績折線圖</span></button>
+      <button class="navbtn" data-view="finance"><span class="navbtn-left"><span class="navicon">＄</span>零用錢快記</span><span class="tag green" id="navFinanceBadge" style="font-size:10px;padding:1px 6px">私人</span></button>
+      <button class="navbtn" data-view="reports"><span class="navbtn-left"><span class="navicon">▤</span>月度趴數統計</span></button>
+      <button class="navbtn" data-view="settings"><span class="navbtn-left"><span class="navicon">⚙</span>隱私與設定</span></button>
+      <div class="navnote" id="navPrivacyNote">🔒 學生收支明細受隱私保護，家長視角僅顯示分類趴數（%）。</div>
+    </nav>
+
+    <main>
+      <!-- 頂部視角狀態提示橫幅 -->
+      <div class="role-banner student" id="roleBanner"></div>
+
+      <!-- 1. 家庭總覽 Dashboard -->
+      <section class="view active" id="view-dashboard">
+        <!-- 📡 今、明、後三天精準預警雷達 -->
+        <div class="radar-box">
+          <div class="panelhead" style="margin-bottom:4px">
+            <h3><span>📡</span> 今、明、後三天精準預警雷達 <span class="tag green" id="radarRoleTag">固定課表 ＋ 考試作業自動整合</span></h3>
+            <div style="display:flex;gap:6px">
+              <button class="linkbtn" id="radarSmartPasteBtn">📋 貼上聯絡簿文字</button>
+              <button class="linkbtn" data-goto="schedule">管理整週課表 →</button>
+            </div>
+          </div>
+          <div class="radar-grid" id="threeDayRadar"></div>
+        </div>
+
+        <div class="cards" id="dashboardStats"></div>
+
+        <div class="panelgrid">
+          <div>
+            <!-- 左欄：視角動態區塊 (家長看接送與鼓勵 / 學生看快記讀書與近期考試) -->
+            <div class="panel" id="dashLeftPrimaryPanel"></div>
+
+            <div class="panel">
+              <div class="panelhead">
+                <h3><span>📈</span> 最新成績趨勢與目標</h3>
+                <button class="linkbtn" data-goto="grades">完整折線圖 →</button>
+              </div>
+              <div id="dashboardGrades"></div>
+            </div>
+          </div>
+
+          <div>
+            <!-- 右欄：儲蓄願望進度 -->
+            <div class="wish-card" id="dashboardWishCard"></div>
+
+            <!-- 右欄：零用錢區塊（學生看1秒快記+結餘 / 家長只看支出分類趴數%） -->
+            <div class="panel" id="dashboardFinancePanel"></div>
+
+            <div class="panel">
+              <div class="panelhead">
+                <h3><span>⏱</span> 本週讀書時數與學習目標</h3>
+                <button class="linkbtn" data-goto="study">開始計時 / 打卡 →</button>
+              </div>
+              <div id="dashboardStudySummary"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 整週課表與才藝補習規劃 Schedule -->
+      <section class="view" id="view-schedule">
+        <div class="sectiontop">
+          <div>
+            <h2>整週課表、補習班與才藝規劃</h2>
+            <p>把學校重頭課、補習班、才藝社團與晚餐接送安排清楚，父母不用死背行程，也能匯出至手機行事曆。</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn blue" id="schedIcsExportBtn">📅 匯出 .ics 到手機行事曆</button>
+            <button class="btn soft" id="toggleSchedViewBtn">切換：週曆網格 / 清單</button>
+            <button class="btn primary" id="addSchedule">＋ 新增行程時段</button>
+          </div>
+        </div>
+        <div class="panel" id="scheduleLogisticsBanner" style="padding:13px 18px;background:#fafcf9"></div>
+        <div class="panel"><div id="scheduleContainer"></div></div>
+      </section>
+
+      <!-- 3. 考試與作業 School -->
+      <section class="view" id="view-school">
+        <div class="sectiontop">
+          <div>
+            <h2>考試、報告與作業追蹤</h2>
+            <p>精準掌握明天、後天與未來的段考、小考、報告期限。支援直接貼上老師 LINE 聯絡簿文字自動建檔！</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn blue" id="schoolSmartPasteBtn">📋 貼上聯絡簿文字自動解析</button>
+            <button class="btn primary" id="addSchool">＋ 新增考試／作業</button>
+          </div>
+        </div>
+        <div class="toolbar">
+          <select id="schoolFilter">
+            <option value="all">全部事項</option>
+            <option value="exam">📚 只看考試</option>
+            <option value="task">✏️ 只看作業／報告</option>
+            <option value="open">⏳ 未完成</option>
+            <option value="done">✓ 已完成</option>
+          </select>
+          <input id="schoolSearch" placeholder="搜尋科目、考試或報告名稱…">
+        </div>
+        <div class="panel"><div id="schoolTable"></div></div>
+      </section>
+
+      <!-- 4. 讀書時間規劃與學習目標 Study -->
+      <section class="view" id="view-study">
+        <div class="sectiontop">
+          <div>
+            <h2>讀書時間規劃與學習目標</h2>
+            <p>使用番茄鐘專注計時或一鍵快記讀書時間，累積每週目標時數，讓父母看見你的自律成果。</p>
+          </div>
+          <button class="btn primary" id="addStudyLogBtn">＋ 手動補登讀書時數</button>
+        </div>
+
+        <!-- 番茄鐘專注計時器 -->
+        <div class="timer-box">
+          <div>
+            <div style="font-size:12px;opacity:0.85;font-weight:700">🍅 專注讀書計時器（完成後自動記入本週讀書時數）</div>
+            <div style="display:flex;align-items:baseline;gap:14px;margin-top:4px;flex-wrap:wrap">
+              <div class="timer-digits" id="timerDisplay">25:00</div>
+              <select id="timerSubjectSelect" style="width:auto;background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3);font-weight:700">
+                <option value="數學" style="color:#000">研讀科目：數學</option>
+                <option value="英文" style="color:#000">研讀科目：英文</option>
+                <option value="國文" style="color:#000">研讀科目：國文</option>
+                <option value="自然" style="color:#000">研讀科目：自然</option>
+                <option value="社會" style="color:#000">研讀科目：社會</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" class="btn" id="timerStartBtn" style="background:#fff;color:var(--green);border:0;font-weight:800">▶ 開始專注</button>
+            <button type="button" class="btn" id="timerMode25Btn" style="background:rgba(255,255,255,0.16);color:#fff;border:0">25分鐘</button>
+            <button type="button" class="btn" id="timerMode50Btn" style="background:rgba(255,255,255,0.16);color:#fff;border:0">50分鐘</button>
+            <button type="button" class="btn" id="timerResetBtn" style="background:rgba(255,255,255,0.16);color:#fff;border:0">↺ 重設</button>
+          </div>
+        </div>
+
+        <!-- 一鍵快記讀書時間 -->
+        <div class="quick-pad">
+          <div class="quick-pad-head">
+            <div class="quick-pad-title">⚡ 剛讀完書？點一下 1 秒打卡讀書時數：</div>
+            <span class="smallmuted">每週目標：<strong id="studyWeeklyGoalLabel">10 小時</strong></span>
+          </div>
+          <div class="quick-chips-list" id="quickStudyChips"></div>
+        </div>
+
+        <div class="panelgrid">
+          <div class="panel">
+            <div class="panelhead"><h3>📊 本週各科讀書時間分布</h3><span class="smallmuted" id="studyTotalWeekLabel"></span></div>
+            <div id="studySubjectBars"></div>
+          </div>
+          <div class="panel">
+            <div class="panelhead"><h3>🎯 學期與近期學習目標設定</h3><button class="linkbtn" id="editGoalsBtn">編輯目標 →</button></div>
+            <div id="studyGoalsList"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panelhead"><h3>近期讀書打卡紀錄</h3></div>
+          <div id="studyLogsTable"></div>
+        </div>
+      </section>
+
+      <!-- 5. 成績追蹤與折線圖 Grades -->
+      <section class="view" id="view-grades">
+        <div class="sectiontop">
+          <div>
+            <h2>成績追蹤與趨勢折線圖</h2>
+            <p>觀察每次段考、模擬考與小考的分數走勢，聚焦在「比上次的自己更進步」。</p>
+          </div>
+          <button class="btn primary" id="addGradeBtn">＋ 登錄新成績</button>
+        </div>
+
+        <div class="panel" style="padding:15px 19px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+            <div>
+              <span class="smallmuted" style="font-weight:700;margin-right:8px">選擇分析科目：</span>
+              <div class="pill-bar" id="gradeSubjectPills" style="display:inline-flex;margin-top:0"></div>
+            </div>
+            <div class="chart-legend">
+              <span class="legend-item"><span class="legend-dot" style="background:var(--green)"></span> 實際得分</span>
+              <span class="legend-item"><span class="legend-dash"></span> 目標分數線</span>
+              <span class="legend-item"><span class="legend-dot" style="background:#9ab0a3"></span> 班級平均</span>
+            </div>
+          </div>
+          <div class="cards" style="margin-top:14px;margin-bottom:10px" id="gradeStatsCards"></div>
+          <div class="chart-container" id="gradeChartBox"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panelhead"><h3>歷史成績明細</h3><span class="smallmuted" id="gradeCountLabel"></span></div>
+          <div id="gradeTable"></div>
+        </div>
+      </section>
+
+      <!-- 6. 零用錢快記與隱私視角 Finance -->
+      <section class="view" id="view-finance">
+        <div class="sectiontop">
+          <div>
+            <h2 id="financePageTitle">零用錢快記與個人帳本</h2>
+            <p id="financePageSub">小孩專屬的快速按鍵記帳本，家長視角僅顯示「分類趴數（%）」與「儲蓄達成率」，保留個人消費隱私。</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap" id="financeTopActions">
+            <button class="btn soft" id="editWishBtn">🎯 設定儲蓄願望</button>
+            <button class="btn blue" id="pinLockSettingBtn">🔐 學生隱私鎖設定</button>
+            <button class="btn primary" id="addTransaction">＋ 記一筆收支</button>
+          </div>
+        </div>
+
+        <!-- 儲蓄願望進度區 (雙視角皆可見達成率%) -->
+        <div id="financeWishArea"></div>
+
+        <!-- 依據「學生視角」或「家長視角」動態渲染：學生看1秒快記+明細表 / 家長只看分類趴數% -->
+        <div id="financeRoleContent"></div>
+      </section>
+
+      <!-- 7. 月度趴數統計 Reports -->
+      <section class="view" id="view-reports">
+        <div class="sectiontop">
+          <div>
+            <h2>月度支出結構趴數（%）統計</h2>
+            <p>不看瑣碎流水帳，只看每月各大分類的百分比分布與儲蓄比例，親子溝通更輕鬆。</p>
+          </div>
+          <div class="monthbar">
+            <label for="reportMonth" style="margin:0">統計月份</label>
+            <input type="month" id="reportMonth">
+          </div>
+        </div>
+        <div class="cards" style="grid-template-columns:repeat(3,minmax(0,1fr))" id="reportTopCards"></div>
+        <div class="panel">
+          <div class="panelhead"><h3>📊 本月支出分類百分比（%）結構</h3><span class="smallmuted">僅顯示各類別佔總支出之百分比</span></div>
+          <div id="categoryBars"></div>
+        </div>
+        <div class="panel">
+          <div class="panelhead"><h3>最近 6 個月預算使用率與儲蓄趨勢</h3><span class="smallmuted">綠條：收入或結餘率 ／ 紅條：支出率</span></div>
+          <div id="sixMonthReport"></div>
+        </div>
+      </section>
+
+      <!-- 8. 隱私與設定 Settings -->
+      <section class="view" id="view-settings">
+        <div class="sectiontop">
+          <div>
+            <h2>隱私保護、學習目標與資料設定</h2>
+            <p>管理「學生視角 PIN 碼鎖」、儲蓄願望目標，或匯出家長專用的「隱私脫敏同步資料」。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>🔐 親子隱私分開機制設定（防止家長看到消費細項）</h3>
+          <div class="notice" style="border-left-color:var(--blue);background:var(--blue-bg);color:#2c4c63">
+            <strong>💡 如何做到父母跟小孩真正分開？</strong><br>
+            1. <strong>同裝置切換鎖定</strong>：在下方設定 4 位數「學生專屬 PIN 碼」。當切換到「👨‍👩‍👧 家長視角」時，所有單筆消費細項與金額明細都會隱藏（只顯示餐費幾 %、文具幾 %）；若要切回「🎒 學生視角」必須輸入 PIN 碼。<br>
+            2. <strong>跨手機物理分開（最推薦）</strong>：小孩在自己手機記帳後，點選上方「💬 LINE 回報卡」產生<strong>「家長專用隱私脫敏同步碼」</strong>傳給爸媽。該同步碼在打包時已徹底刪除所有單筆消費明細，爸媽貼到自己手機上也只看得到課表、考試與消費趴數（%）！
+          </div>
+          <div class="formgrid" style="margin-top:14px">
+            <div class="field">
+              <label for="studentPinInput">🔐 學生視角 4 位數 PIN 碼鎖（留空代表不鎖定）</label>
+              <input type="password" id="studentPinInput" maxlength="8" placeholder="例如：1234（設定後從家長切回學生需驗證）">
+            </div>
+            <div class="field">
+              <label for="parentNoteInput">💬 家長給孩子的鼓勵留言（顯示於首頁）</label>
+              <input id="parentNoteInput" maxlength="80" placeholder="例如：這週數學有進步喔！週末一起去吃好料～">
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>🎯 家庭暱稱、儲蓄願望與每週讀書目標</h3>
+          <div class="formgrid" style="margin-top:14px">
+            <div class="field">
+              <label for="familyName">家庭／孩子暱稱</label>
+              <input id="familyName" placeholder="例如：小宇的高一計畫" maxlength="40">
+            </div>
+            <div class="field">
+              <label for="weeklyStudyGoalInput">⏱ 每週目標讀書時數（小時）</label>
+              <input type="number" id="weeklyStudyGoalInput" min="1" max="80" step="1" placeholder="例如：10">
+            </div>
+            <div class="field">
+              <label for="wishTitleInput">🎯 儲蓄願望項目名稱</label>
+              <input id="wishTitleInput" placeholder="例如：購買 Sony 降噪藍牙耳機" maxlength="50">
+            </div>
+            <div class="field">
+              <label for="wishTargetInput">🎯 儲蓄目標金額（NT$）</label>
+              <input type="number" id="wishTargetInput" min="100" step="50" placeholder="例如：2500">
+            </div>
+          </div>
+          <div class="formactions">
+            <button class="btn primary" id="saveSettings">儲存所有設定</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>資料備份與行事曆整合</h3>
+          <p class="smallmuted">所有資料儲存在本機瀏覽器中。可隨時匯出完整 JSON 備份，或匯出 `.ics` 行事曆給手機內建日曆使用。</p>
+          <div class="formactions" style="justify-content:flex-start">
+            <button class="btn soft" id="settingsDemoBtn">✨ 載入範例資料</button>
+            <button class="btn blue" id="settingsIcsBtn">📅 匯出 .ics 行事曆</button>
+            <button class="btn" id="settingsExport">匯出完整 JSON 備份</button>
+            <button class="btn" id="settingsImport">匯入 JSON 備份</button>
+            <button class="btn danger" id="clearData">清除所有本機紀錄</button>
+          </div>
+        </div>
+      </section>
+
+      <footer>家有計畫 v3.0 · 親子雙視角隱私分開版 · 學生快記明細 × 家長只看趴數(%) × 整週課表與三天雷達</footer>
+    </main>
+  </div>
+</div>
+
+<!-- 通用表單與智慧功能 Modal -->
+<div class="modalback" id="modalBack">
+  <div class="modal">
+    <div class="modalhead">
+      <h3 id="modalTitle">新增紀錄</h3>
+      <button class="close" id="closeModal" aria-label="關閉">×</button>
+    </div>
+    <form id="modalForm">
+      <div id="modalFields"></div>
+      <div class="formactions" id="modalFooterActions">
+        <button type="button" class="btn" id="cancelModal">取消</button>
+        <button class="btn primary" type="submit" id="submitModalBtn">儲存紀錄</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 確認與 PIN 碼驗證對話框 Modal -->
+<div class="modalback" id="confirmBack">
+  <div class="modal" style="width:min(420px,100%)">
+    <div class="modalhead">
+      <h3 id="confirmTitle">確認操作</h3>
+      <button class="close" id="closeConfirm">×</button>
+    </div>
+    <p id="confirmMessage" style="margin:6px 0 14px;font-size:14px;color:var(--ink)"></p>
+    <div id="confirmExtraInput" style="display:none;margin-bottom:14px">
+      <input type="password" id="pinVerifyInput" placeholder="請輸入學生 PIN 碼" style="text-align:center;font-size:18px;letter-spacing:0.2em;font-weight:700">
+    </div>
+    <div class="formactions">
+      <button type="button" class="btn" id="cancelConfirmBtn">取消</button>
+      <button type="button" class="btn primary" id="okConfirmBtn">確定</button>
+    </div>
+  </div>
+</div>
+
+<!-- 右下角 Toast 容器 -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+const KEY = 'jiayou_plan_prototype_v1';
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+const todayISO = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+const daysAgoISO = (days) => {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+const monthISO = () => todayISO().slice(0, 7);
+const uid = () => Math.random().toString(36).slice(2, 10);
+const money = n => 'NT$' + Number(n || 0).toLocaleString('zh-TW', { maximumFractionDigits: 0 });
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>':'&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+const weekdays = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'];
+const subjectsList = ['數學', '英文', '國文', '自然', '社會', '其他'];
+const examPresets = ['第一次段考', '第二次段考', '期末段考', '模擬考(一)', '模擬考(二)', '隨堂小考'];
+const logisticsList = ['🏠 自行回家/在家用餐', '🚗 需家長接送', '🍱 補習前外食', '🚗+🍱 需接送且外食'];
+
+// 學生專屬 1 秒快記按鈕
+const quickFinancePresets = [
+  { label: '🍱 午餐', type: 'expense', category: '餐費', amount: 90, note: '午餐便當/學校合作社' },
+  { label: '🧋 飲料點心', type: 'expense', category: '餐費', amount: 55, note: '放學手搖飲/點心' },
+  { label: '🚌 交通儲值', type: 'expense', category: '交通', amount: 100, note: '悠遊卡公車捷運' },
+  { label: '📓 文具參考書', type: 'expense', category: '文具／學用品', amount: 150, note: '講義/筆芯/考卷夾' },
+  { label: '🎮 娛樂聚餐', type: 'expense', category: '娛樂', amount: 200, note: '同學聚餐/休閒娛樂' },
+  { label: '🐷 存入撲滿', type: 'expense', category: '儲蓄', amount: 200, note: '撥入願望儲蓄基金' },
+  { label: '💰 領零用錢', type: 'income', category: '零用錢', amount: 1000, note: '固定零用錢補充' }
+];
+
+// 讀書時間 1 秒快記按鈕
+const quickStudyPresets = [
+  { subject: '數學', mins: 30, note: '演練講義題型' },
+  { subject: '數學', mins: 60, note: '段考範圍複習' },
+  { subject: '英文', mins: 30, note: '背單字與雜誌閱讀' },
+  { subject: '英文', mins: 60, note: '聽力與文法練習' },
+  { subject: '國文', mins: 30, note: '古文與閱讀理解' },
+  { subject: '自然', mins: 45, note: '觀念整理與圖表題' },
+  { subject: '社會', mins: 30, note: '重點筆記整理' }
+];
+
+const categoryColors = {
+  '餐費': '#356b50',
+  '文具／學用品': '#527d9b',
+  '交通': '#d99c46',
+  '娛樂': '#bf6258',
+  '儲蓄': '#6c5ce7',
+  '補習／才藝': '#4d908e',
+  '其他': '#8d99ae'
+};
+
+const defaults = {
+  schedule: [],
+  school: [],
+  grades: [],
+  transactions: [],
+  studyLogs: [],
+  goals: [
+    { id: 'g1', title: '第二次段考數學突破 85 分', progress: 80, done: false },
+    { id: 'g2', title: '每週維持自主讀書滿 10 小時', progress: 75, done: false },
+    { id: 'g3', title: '英文雜誌單字本背完 Unit 1~6', progress: 100, done: true }
+  ],
+  // 若為從學生端透過「家長脫敏同步碼」匯入的裝置，會帶有 sanitizedSummary 供家長端直接查看趴數
+  sanitizedSummary: null,
+  settings: {
+    familyName: '小宇的高一計畫',
+    currency: 'TWD',
+    wishTitle: 'Sony 降噪藍牙耳機',
+    wishTarget: 2500,
+    weeklyStudyGoalHours: 10,
+    studentPin: '',
+    parentNote: '這週數學小考很穩喔！週五補習下課爸爸會去接你～'
+  }
+};
+
+let data = loadData();
+let currentRole = 'student'; // 'student' | 'parent'
+let scheduleViewMode = 'grid'; // 'grid' | 'list'
+let editing = null;
+let modalType = null;
+let selectedGradeSubject = '全部平均';
+let confirmCallback = null;
+
+// 番茄鐘狀態
+let timerSeconds = 25 * 60;
+let timerTotalSeconds = 25 * 60;
+let timerInterval = null;
+
+function loadData() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(KEY) || '{}');
+    const merged = {
+      ...structuredClone(defaults),
+      ...raw,
+      grades: Array.isArray(raw.grades) ? raw.grades : [],
+      studyLogs: Array.isArray(raw.studyLogs) ? raw.studyLogs : [],
+      goals: Array.isArray(raw.goals) && raw.goals.length ? raw.goals : structuredClone(defaults.goals),
+      settings: { ...structuredClone(defaults.settings), ...(raw.settings || {}) }
+    };
+    return merged;
+  } catch (e) {
+    return structuredClone(defaults);
+  }
+}
+
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(data));
+    return true;
+  } catch (e) {
+    showToast('瀏覽器儲存空間已滿，請先匯出備份。');
+    return false;
+  }
+}
+
+// 首次打開若完全無資料，自動載入精選範例讓使用者立即體驗雙視角與三天雷達
+if (data.schedule.length === 0 && data.school.length === 0 && data.grades.length === 0 && data.transactions.length === 0 && !data.sanitizedSummary) {
+  loadDemoData(true);
+}
+
+// Toast 訊息通知
+function showToast(msg, actionText = null, actionFn = null) {
+  const wrap = $('#toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<span>${esc(msg)}</span>${actionText ? `<button type="button">${esc(actionText)}</button>` : ''}`;
+  if (actionText && actionFn) {
+    el.querySelector('button').onclick = () => {
+      actionFn();
+      el.remove();
+    };
+  }
+  wrap.appendChild(el);
+  setTimeout(() => { if (el.parentNode) el.remove(); }, 4200);
+}
+
+// 自訂確認 / PIN 碼驗證視窗
+function askConfirm(title, message, onOk, requirePin = false) {
+  $('#confirmTitle').textContent = title;
+  $('#confirmMessage').textContent = message;
+  const pinBox = $('#confirmExtraInput');
+  const pinInput = $('#pinVerifyInput');
+  if (requirePin) {
+    pinBox.style.display = 'block';
+    pinInput.value = '';
+    setTimeout(() => pinInput.focus(), 60);
+  } else {
+    pinBox.style.display = 'none';
+  }
+  confirmCallback = () => {
+    if (requirePin) {
+      if (pinInput.value !== data.settings.studentPin) {
+        showToast('❌ PIN 碼不正確，無法切換至學生私人明細視角');
+        return;
+      }
+    }
+    onOk();
+  };
+  $('#confirmBack').classList.add('open');
+}
+function closeConfirmModal() {
+  $('#confirmBack').classList.remove('open');
+  confirmCallback = null;
+}
+$('#closeConfirm').onclick = closeConfirmModal;
+$('#cancelConfirmBtn').onclick = closeConfirmModal;
+$('#okConfirmBtn').onclick = () => {
+  const fn = confirmCallback;
+  closeConfirmModal();
+  if (fn) fn();
+};
+
+// 切換「🎒 學生視角」與「👨‍👩‍👧 家長視角」
+function switchRole(targetRole) {
+  if (targetRole === currentRole) return;
+  if (targetRole === 'student' && data.settings.studentPin) {
+    askConfirm(
+      '🔐 學生隱私保護驗證',
+      '此裝置已啟用「學生收支明細鎖」。請輸入學生專屬 PIN 碼以切換回學生視角：',
+      () => {
+        currentRole = 'student';
+        renderAll();
+        showToast('🔓 已解鎖切換至「學生視角」');
+      },
+      true
+    );
+    return;
+  }
+  currentRole = targetRole;
+  renderAll();
+  showToast(currentRole === 'parent' ? '👨‍👩‍👧 已切換至「家長視角」（自動隱藏消費細項，僅顯示趴數%）' : '🎒 已切換至「學生視角」');
+}
+
+$('#roleStudentBtn').onclick = () => switchRole('student');
+$('#roleParentBtn').onclick = () => switchRole('parent');
+
+// 日期輔助函式
+function fmtDate(s) {
+  if (!s) return '未設定';
+  const d = new Date(s + 'T12:00:00');
+  return `${d.getMonth() + 1}/${d.getDate()}`;
+}
+function daysFromToday(s) {
+  if (!s) return 9999;
+  return Math.round((new Date(s + 'T12:00:00') - new Date(todayISO() + 'T12:00:00')) / 86400000);
+}
+function getWeekdayIndex(dateISO) {
+  const d = new Date(dateISO + 'T12:00:00');
+  const day = d.getDay(); // 0=Sun, 1=Mon...
+  return day === 0 ? 6 : day - 1; // 轉為 0=星期一 ... 6=星期日
+}
+
+function monthRows(month) {
+  return data.transactions.filter(t => t.date && t.date.startsWith(month));
+}
+function totals(rows) {
+  return rows.reduce((a, t) => {
+    a[t.type] += Number(t.amount) || 0;
+    return a;
+  }, { income: 0, expense: 0 });
+}
+
+// 計算某月份的「隱私脫敏趴數摘要」（供家長視角與脫敏同步碼使用）
+function getPrivacyPercentageStats(monthStr) {
+  // 若這台手機是家長匯入的「脫敏同步碼」且本地無明細，直接讀取 sanitizedSummary
+  if (data.transactions.length === 0 && data.sanitizedSummary && data.sanitizedSummary.month === monthStr) {
+    return data.sanitizedSummary;
+  }
+  const rows = monthRows(monthStr);
+  const tt = totals(rows);
+  const cats = {};
+  rows.filter(x => x.type === 'expense' && x.category !== '儲蓄').forEach(x => {
+    cats[x.category] = (cats[x.category] || 0) + Number(x.amount || 0);
+  });
+  const totalConsumed = Object.values(cats).reduce((a, b) => a + b, 0);
+  const breakdown = Object.entries(cats)
+    .sort((a, b) => b[1] - a[1])
+    .map(([category, amt]) => ({
+      category,
+      pct: totalConsumed > 0 ? Math.round((amt / totalConsumed) * 100) : 0
+    }));
+
+  const usedPct = tt.income > 0 ? Math.min(100, Math.round((tt.expense / tt.income) * 100)) : (tt.expense > 0 ? 100 : 0);
+  const remainPct = Math.max(0, 100 - usedPct);
+  const wish = calcSavingsProgress();
+
+  return {
+    month: monthStr,
+    usedPct,
+    remainPct,
+    wishPct: wish.pct,
+    wishTitle: wish.title,
+    breakdown
+  };
+}
+
+function calcSavingsProgress() {
+  if (data.transactions.length === 0 && data.sanitizedSummary) {
+    return {
+      title: data.settings.wishTitle || '理想儲蓄願望',
+      target: Number(data.settings.wishTarget) || 2500,
+      saved: 0,
+      pct: data.sanitizedSummary.wishPct || 0,
+      isSanitizedOnly: true
+    };
+  }
+  const target = Number(data.settings.wishTarget) || 2500;
+  const title = data.settings.wishTitle || '購買理想願望清單';
+  const explicitSavings = data.transactions
+    .filter(t => t.category === '儲蓄')
+    .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+  const allTotals = totals(data.transactions);
+  const netBalance = Math.max(0, allTotals.income - allTotals.expense);
+  const saved = explicitSavings > 0 ? explicitSavings + Math.round(netBalance * 0.3) : netBalance;
+  const pct = Math.min(100, Math.round((saved / target) * 100));
+  return { title, target, saved, pct, isSanitizedOnly: false };
+}
+
+function showView(name) {
+  $$('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + name));
+  $$('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.view === name));
+  renderAll();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+$$('.navbtn').forEach(b => b.addEventListener('click', () => showView(b.dataset.view)));
+$$('[data-goto]').forEach(b => b.addEventListener('click', () => showView(b.dataset.goto)));
+
+function empty(text) {
+  return `<div class="empty">${text}</div>`;
+}
+
+function schoolRows() {
+  return [...data.school].sort((a, b) => (a.date || '9999').localeCompare(b.date || '9999'));
+}
+function gradeRows() {
+  return [...data.grades].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+}
+
+// 渲染頂部視角橫幅與按鈕狀態
+function renderRoleHeader() {
+  const fam = data.settings.familyName?.trim() || '親子共學版';
+  $('#headerFamilyBadge').textContent = fam;
+
+  const hasPin = Boolean(data.settings.studentPin);
+  $('#pinStatusBadge').textContent = hasPin ? '🔒已設密碼' : '🔓';
+  $('#roleStudentBtn').classList.toggle('active', currentRole === 'student');
+  $('#roleParentBtn').classList.toggle('active', currentRole === 'parent');
+  $('#navFinanceBadge').textContent = currentRole === 'student' ? '私人明細' : '僅看%';
+
+  const banner = $('#roleBanner');
+  if (currentRole === 'student') {
+    banner.className = 'role-banner student';
+    banner.innerHTML = `
+      <div>
+        <strong>🎒 目前為【學生個人視角】</strong>：你可以 1 秒快記個人收支並查看完整明細。切換至家長視角或傳送 LINE 同步碼時，<strong>家長只能看到各分類百分比（%），看不到任何單筆消費細項！</strong>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button type="button" class="mini" onclick="openPinModal()">🔐 ${hasPin ? '修改隱私密碼' : '設定隱私 PIN 碼鎖'}</button>
+        <button type="button" class="mini" onclick="switchRole('parent')">預覽家長看到的畫面 →</button>
+      </div>
+    `;
+  } else {
+    banner.className = 'role-banner parent';
+    banner.innerHTML = `
+      <div>
+        <strong>👨‍👩‍👧 目前為【家長協作視角】</strong>：系統已為您整理<strong>今明後三天課業/接送雷達</strong>與<strong>整週補習才藝表</strong>。零用錢採用「🛡️ 隱私信任模式」，僅呈現支出分類趴數（%）與儲蓄進度。
+      </div>
+      <div style="display:flex;gap:6px">
+        <button type="button" class="mini" onclick="openParentEncourageModal()">💌 寫鼓勵留言給孩子</button>
+        <button type="button" class="mini" onclick="switchRole('student')">切回學生視角 ${hasPin ? '🔒' : ''} →</button>
+      </div>
+    `;
+  }
+}
+
+// 渲染「📡 今、明、後三天精準預警雷達」
+function renderThreeDayRadar() {
+  const days = [
+    { offset: 0, label: '今天', tagClass: 'green' },
+    { offset: 1, label: '明天', tagClass: 'gold' },
+    { offset: 2, label: '後天', tagClass: 'blue' }
+  ];
+
+  $('#threeDayRadar').innerHTML = days.map(d => {
+    const iso = daysAgoISO(-d.offset);
+    const wIdx = getWeekdayIndex(iso);
+    const wName = weekdays[wIdx];
+
+    // 1. 抓出當天固定週課表 (學校/補習/才藝)
+    const schedItems = data.schedule
+      .filter(s => Number(s.day) === wIdx)
+      .sort((a, b) => a.start.localeCompare(b.start));
+
+    // 2. 抓出當天特定日期的考試/作業/報告
+    const schoolItems = data.school.filter(x => x.date === iso);
+
+    const combinedHTML = [
+      ...schoolItems.map(x => `
+        <div class="radar-item">
+          <span class="tag ${x.type === 'exam' ? 'red' : 'gold'}">${x.type === 'exam' ? '📚 考試' : '✏️ 作業/報告'}</span>
+          <div style="flex:1">
+            <strong style="${x.done ? 'text-decoration:line-through;color:var(--muted)' : ''}">[${esc(x.subject || '未分類')}] ${esc(x.title)}</strong>
+            ${x.note ? `<div class="smallmuted">${esc(x.note)}</div>` : ''}
+          </div>
+          <button class="mini" data-toggle="${x.id}" style="padding:2px 6px;font-size:10.5px">${x.done ? '✓' : '待辦'}</button>
+        </div>
+      `),
+      ...schedItems.map(s => `
+        <div class="radar-item">
+          <span class="tag ${s.kind === '補習班' ? 'gold' : s.kind === '才藝社團' ? 'purple' : 'green'}">${esc(s.start)}-${esc(s.end)}</span>
+          <div style="flex:1">
+            <strong>${esc(s.title)}</strong> <span class="smallmuted">(${esc(s.kind)})</span>
+            <div class="smallmuted">${esc(s.place || '')} ${s.logistics && !s.logistics.startsWith('🏠') ? `<strong style="color:var(--blue)">· ${esc(s.logistics)}</strong>` : ''}</div>
+          </div>
+        </div>
+      `)
+    ].join('');
+
+    return `
+      <div class="radar-col ${d.offset === 0 ? 'today' : ''}">
+        <div class="radar-col-head">
+          <span>${d.label} · ${fmtDate(iso)}（${wName}）</span>
+          <span class="tag ${d.tagClass}">${schoolItems.length + schedItems.length} 項行程</span>
+        </div>
+        ${combinedHTML || `<div class="smallmuted" style="padding:14px 4px;text-align:center">🎉 這天目前沒有排定考試或補習才藝行程</div>`}
+      </div>
+    `;
+  }).join('');
+}
+
+// 儲蓄願望卡片 HTML (學生看金額+趴數 / 家長只看趴數%)
+function renderWishCardHTML() {
+  const w = calcSavingsProgress();
+  if (currentRole === 'parent' || w.isSanitizedOnly) {
+    return `
+      <div class="wish-top">
+        <div class="wish-title">🎯 孩子儲蓄願望：${esc(w.title)}</div>
+        <span class="tag ${w.pct >= 100 ? 'green' : 'gold'}">${w.pct >= 100 ? '🎉 已達成 100%！' : `目前達成率 ${w.pct}%`}</span>
+      </div>
+      <div class="bartrack" style="height:11px;background:#e2ece4">
+        <div class="barfill" style="width:${w.pct}%;background:linear-gradient(90deg, var(--green), #579c78)"></div>
+      </div>
+      <div class="wish-meta">
+        <span>🛡️ 家長視角僅呈現儲蓄達成百分比：<strong>${w.pct}%</strong></span>
+        <span>距離目標還差：<strong>${100 - w.pct}%</strong></span>
+      </div>
+    `;
+  }
+  const remain = Math.max(0, w.target - w.saved);
+  return `
+    <div class="wish-top">
+      <div class="wish-title">🎯 我的儲蓄願望：${esc(w.title)}</div>
+      <span class="tag ${w.pct >= 100 ? 'green' : 'gold'}">${w.pct >= 100 ? '🎉 已達成目標！' : `達成率 ${w.pct}%`}</span>
+    </div>
+    <div class="bartrack" style="height:11px;background:#e2ece4">
+      <div class="barfill" style="width:${w.pct}%;background:linear-gradient(90deg, var(--green), #579c78)"></div>
+    </div>
+    <div class="wish-meta">
+      <span>目前已存：<strong class="moneypos">${money(w.saved)}</strong></span>
+      <span>目標：<strong>${money(w.target)}</strong>（${remain > 0 ? `還差 ${money(remain)}` : '超額完成！'}）</span>
+    </div>
+  `;
+}
+
+// 支出分類百分比視覺化元件 (供家長視角與月度統計共用，完全不露金額與細項)
+function renderCategoryPercentageViewHTML(monthStr) {
+  const stats = getPrivacyPercentageStats(monthStr);
+  if (!stats.breakdown || stats.breakdown.length === 0) {
+    return empty('本月尚無支出分類百分比資料。');
+  }
+
+  const stackSegments = stats.breakdown.map(b => {
+    const color = categoryColors[b.category] || '#6d9d7d';
+    return `<div class="pct-segment" style="width:${b.pct}%;background:${color}" title="${esc(b.category)} ${b.pct}%"></div>`;
+  }).join('');
+
+  const rowsHTML = stats.breakdown.map(b => {
+    const color = categoryColors[b.category] || '#6d9d7d';
+    return `
+      <div class="barrow">
+        <span style="display:flex;align-items:center;gap:6px;font-weight:700">
+          <span style="width:10px;height:10px;border-radius:50%;background:${color};display:inline-block"></span>
+          ${esc(b.category)}
+        </span>
+        <div class="bartrack"><div class="barfill" style="width:${b.pct}%;background:${color}"></div></div>
+        <strong style="text-align:right;color:var(--ink)">${b.pct}%</strong>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:4px">
+      <span>本月零用錢已使用比例：<strong>${stats.usedPct}%</strong></span>
+      <span>剩餘可用結餘比例：<strong class="moneypos">${stats.remainPct}%</strong></span>
+    </div>
+    <div class="pct-stack-bar">${stackSegments}</div>
+    <div style="margin-top:10px">${rowsHTML}</div>
+  `;
+}
+
+// 1. 渲染家庭總覽 Dashboard
+function renderDashboard() {
+  renderThreeDayRadar();
+
+  const m = monthISO();
+  const tx = monthRows(m);
+  const tt = totals(tx);
+  const pctStats = getPrivacyPercentageStats(m);
+  const futureExams = schoolRows().filter(x => x.date && daysFromToday(x.date) >= 0 && daysFromToday(x.date) <= 30 && !x.done && x.type === 'exam');
+  const openTasks = data.school.filter(x => x.type === 'task' && !x.done);
+
+  // 計算本週讀書總時數
+  const weekMins = data.studyLogs.reduce((sum, l) => sum + Number(l.mins || 0), 0);
+  const weekHours = Math.round((weekMins / 60) * 10) / 10;
+  const goalHours = Number(data.settings.weeklyStudyGoalHours) || 10;
+  const studyPct = Math.min(100, Math.round((weekHours / goalHours) * 100));
+
+  // 最新成績
+  const avgScore = data.grades.length
+    ? Math.round((data.grades.reduce((s, g) => s + Number(g.score || 0), 0) / data.grades.length) * 10) / 10
+    : null;
+
+  // 頂部 4 張統計卡 (根據視角決定第 4 張卡片顯示「可用結餘金額」或「儲蓄與預算趴數%」)
+  $('#dashboardStats').innerHTML = `
+    <div class="stat">
+      <div class="stathead">近期考試與待辦 <span class="stat-icon">📚</span></div>
+      <div class="statnum">${futureExams.length} 考 / ${openTasks.length} 作業</div>
+      <div class="statdesc">點上方三天雷達可直接勾選</div>
+    </div>
+    <div class="stat">
+      <div class="stathead">本週讀書目標達成 <span class="stat-icon">⏱</span></div>
+      <div class="statnum">${studyPct}%</div>
+      <div class="statdesc">已累計 ${weekHours} / ${goalHours} 小時</div>
+    </div>
+    <div class="stat">
+      <div class="stathead">歷次考試總平均 <span class="stat-icon">📈</span></div>
+      <div class="statnum">${avgScore !== null ? `${avgScore} 分` : '—'}</div>
+      <div class="statdesc">${data.grades.length ? `共 ${data.grades.length} 筆成績紀錄` : '尚未登錄成績'}</div>
+    </div>
+    ${currentRole === 'student' ? `
+      <div class="stat">
+        <div class="stathead">我的零用錢結餘 (私人) <span class="stat-icon">🔒</span></div>
+        <div class="statnum moneypos">${money(tt.income - tt.expense)}</div>
+        <div class="statdesc">家長端僅顯示剩餘 ${pctStats.remainPct}%</div>
+      </div>
+    ` : `
+      <div class="stat">
+        <div class="stathead">零用錢剩餘比例 <span class="stat-icon">🛡️</span></div>
+        <div class="statnum moneypos">剩餘 ${pctStats.remainPct}%</div>
+        <div class="statdesc">已使用 ${pctStats.usedPct}% · 儲蓄達成 ${pctStats.wishPct}%</div>
+      </div>
+    `}
+  `;
+
+  // 左欄主面板：學生看「接下來的考試作業＋家長留言」 / 家長看「本週接送與外食提醒＋給孩子的鼓勵」
+  if (currentRole === 'student') {
+    const upcoming = schoolRows().filter(x => !x.done).slice(0, 5);
+    $('#dashLeftPrimaryPanel').innerHTML = `
+      ${data.settings.parentNote ? `<div class="notice" style="margin-top:0">💌 <strong>爸媽的留言：</strong>「${esc(data.settings.parentNote)}」</div>` : ''}
+      <div class="panelhead">
+        <h3><span>📌</span> 待完成考試、報告與作業</h3>
+        <div style="display:flex;gap:6px">
+          <button class="linkbtn" onclick="openModal('school')">＋ 新增</button>
+          <button class="linkbtn" data-goto="school" onclick="showView('school')">全部清單 →</button>
+        </div>
+      </div>
+      <div class="list">
+        ${upcoming.length ? upcoming.map(x => {
+          const dLeft = daysFromToday(x.date);
+          const badge = !x.date ? '未定' : dLeft === 0 ? '今天！' : dLeft === 1 ? '明天！' : dLeft === 2 ? '後天！' : dLeft > 0 ? `${dLeft}天後` : '已過期';
+          return `<div class="listitem">
+            <div class="datebox">${x.date ? fmtDate(x.date) : '待定'}<span>${x.type === 'exam' ? '考試' : '作業'}</span></div>
+            <div class="itemmain">
+              <div class="itemtitle">${esc(x.title)}</div>
+              <div class="itemmeta">${esc(x.subject || '未分類')}${x.note ? ' · ' + esc(x.note) : ''}</div>
+            </div>
+            <span class="tag ${dLeft <= 2 && dLeft >= 0 ? 'red' : 'gold'}">${badge}</span>
+            <button class="mini" data-toggle="${x.id}">✓ 完成</button>
+          </div>`;
+        }).join('') : empty('太棒了！目前沒有待辦考試或作業。')}
+      </div>
+    `;
+  } else {
+    // 家長視角左欄：重點顯示「需接送 / 外食時段」與「近期重要考試」
+    const pickupList = [...data.schedule]
+      .filter(s => s.logistics && !s.logistics.startsWith('🏠'))
+      .sort((a, b) => a.day - b.day || a.start.localeCompare(b.start));
+
+    $('#dashLeftPrimaryPanel').innerHTML = `
+      <div class="panelhead">
+        <h3><span>🚗</span> 家長重點關注：本週接送與外食時段</h3>
+        <button class="linkbtn" onclick="showView('schedule')">完整週課表 →</button>
+      </div>
+      <div class="list">
+        ${pickupList.length ? pickupList.map(s => `
+          <div class="listitem">
+            <span class="tag green">${weekdays[s.day]}</span>
+            <div class="itemmain">
+              <div class="itemtitle">${esc(s.start)}–${esc(s.end)} ｜ ${esc(s.title)}</div>
+              <div class="itemmeta">📍 ${esc(s.place || '未填地點')} · <strong style="color:var(--blue)">${esc(s.logistics)}</strong></div>
+            </div>
+          </div>
+        `).join('') : empty('本週課表目前無標記需特別接送的時段。')}
+      </div>
+      <div class="notice" style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+        <span>💌 <strong>目前給孩子的鼓勵留言：</strong>「${esc(data.settings.parentNote || '加油！')}」</span>
+        <button type="button" class="mini" onclick="openParentEncourageModal()">修改留言</button>
+      </div>
+    `;
+  }
+
+  // 左欄下方：近期成績
+  const recentGrades = gradeRows().slice(-4).reverse();
+  $('#dashboardGrades').innerHTML = recentGrades.length ? `<div class="list">` + recentGrades.map(g => {
+    const diff = g.target ? Number(g.score) - Number(g.target) : null;
+    return `<div class="listitem">
+      <div class="datebox" style="background:var(--blue-bg);color:var(--blue)">${g.score}<span>${esc(g.subject)}</span></div>
+      <div class="itemmain">
+        <div class="itemtitle">${esc(g.examName)}</div>
+        <div class="itemmeta">${esc(g.date || '')}${g.classAvg ? ` · 班均 ${g.classAvg} 分` : ''}${g.note ? ` · ${esc(g.note)}` : ''}</div>
+      </div>
+      ${diff !== null ? `<span class="tag ${diff >= 0 ? 'green' : 'gold'}">${diff >= 0 ? `達標 +${diff}` : `差目標 ${Math.abs(diff)}分`}</span>` : ''}
+    </div>`;
+  }).join('') + `</div>` : empty('尚無考試成績紀錄。');
+
+  // 右欄：儲蓄願望卡
+  $('#dashboardWishCard').innerHTML = renderWishCardHTML();
+
+  // 右欄：零用錢面板（學生看1秒快記 / 家長只看趴數%）
+  if (currentRole === 'student') {
+    $('#dashboardFinancePanel').innerHTML = `
+      <div class="panelhead">
+        <h3><span>⚡</span> 1 秒快記零用錢 <span class="privacy-pill">🔒 明細僅自己可見</span></h3>
+        <button class="linkbtn" onclick="showView('finance')">私人帳本明細 →</button>
+      </div>
+      <div class="quick-chips-list">
+        ${quickFinancePresets.map((p, i) => `
+          <button type="button" class="chip-action" data-quick-tx="${i}">
+            <span>${esc(p.label)}</span>
+            <span class="${p.type === 'income' ? 'amt-pos' : 'amt-neg'}">${p.type === 'income' ? '+' : '-'}${p.amount}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px">
+        <span class="smallmuted">本月收入 <strong class="moneypos">${money(tt.income)}</strong> · 支出 <strong class="moneyneg">${money(tt.expense)}</strong></span>
+        <span>可用結餘：<strong>${money(tt.income - tt.expense)}</strong></span>
+      </div>
+    `;
+  } else {
+    $('#dashboardFinancePanel').innerHTML = `
+      <div class="panelhead">
+        <h3><span>📊</span> 零用錢支出分類趴數 <span class="tag blue">🛡️ 隱私保護中</span></h3>
+        <button class="linkbtn" onclick="showView('reports')">月度統計 →</button>
+      </div>
+      ${renderCategoryPercentageViewHTML(m)}
+      <div class="smallmuted" style="margin-top:8px">＊為尊重孩子自主理財空間，家長端僅顯示各類別百分比（%），不顯示單筆消費項目。</div>
+    `;
+  }
+
+  // 右欄下方：讀書時數與學習目標摘要
+  $('#dashboardStudySummary').innerHTML = `
+    <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px">
+      <span>本週讀書累計：<strong>${weekHours} 小時</strong>（目標 ${goalHours} 小時）</span>
+      <strong style="color:var(--green)">${studyPct}%</strong>
+    </div>
+    <div class="bartrack" style="height:10px;margin-bottom:12px">
+      <div class="barfill" style="width:${studyPct}%"></div>
+    </div>
+    <div class="list">
+      ${data.goals.slice(0, 3).map(g => `
+        <div class="listitem" style="padding:6px 0">
+          <button class="mini" data-toggle-goal="${g.id}">${g.done ? '✓' : '○'}</button>
+          <div class="itemmain">
+            <div class="itemtitle" style="font-size:12.5px;${g.done ? 'text-decoration:line-through;color:var(--muted)' : ''}">${esc(g.title)}</div>
+          </div>
+          <span class="tag ${g.done ? 'green' : 'gold'}">${g.done ? '已達成' : `${g.progress || 50}%`}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// 2. 渲染整週課表與才藝補習規劃
+function renderSchedule() {
+  const pickupCount = data.schedule.filter(s => s.logistics && s.logistics.includes('接送')).length;
+  const eatOutCount = data.schedule.filter(s => s.logistics && s.logistics.includes('外食')).length;
+  $('#scheduleLogisticsBanner').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:13px">
+      <div>
+        <strong>📋 整週行程統計：</strong>共 <strong>${data.schedule.length}</strong> 個固定時段
+        （包含 <span class="tag blue">🚗 需家長接送 ${pickupCount} 次</span> <span class="tag gold">🍱 補習前外食 ${eatOutCount} 次</span>）
+      </div>
+      <span class="smallmuted">提示：點擊「匯出 .ics」即可一鍵加入爸媽與孩子的手機行事曆！</span>
+    </div>
+  `;
+
+  const rows = [...data.schedule].sort((a, b) => a.day - b.day || a.start.localeCompare(b.start));
+  if (rows.length === 0) {
+    $('#scheduleContainer').innerHTML = empty('尚未建立課表或補習才藝行程。');
+    return;
+  }
+
+  if (scheduleViewMode === 'grid') {
+    $('#scheduleContainer').innerHTML = `
+      <div class="week-grid">
+        ${weekdays.map((wName, dayIdx) => {
+          const dayItems = rows.filter(r => Number(r.day) === dayIdx);
+          return `
+            <div class="day-col">
+              <div class="day-col-head">${wName}</div>
+              ${dayItems.length ? dayItems.map(item => {
+                const cls = item.kind === '補習班' ? 'cram' : item.kind === '才藝社團' ? 'talent' : item.kind === '自主複習' ? 'self' : '';
+                return `
+                  <div class="sched-card ${cls}">
+                    <div style="display:flex;justify-content:space-between;align-items:center;font-weight:750;color:var(--green)">
+                      <span>${esc(item.start)}–${esc(item.end)}</span>
+                      <button class="mini" style="padding:1px 5px;font-size:10px" data-edit="schedule:${item.id}">編</button>
+                    </div>
+                    <div style="font-weight:750;margin:3px 0">${esc(item.title)}</div>
+                    <div class="smallmuted" style="font-size:11px">${esc(item.kind)} ${item.place ? '· ' + esc(item.place) : ''}</div>
+                    ${item.logistics && !item.logistics.startsWith('🏠') ? `<div style="margin-top:4px"><span class="tag blue" style="font-size:10px;padding:1px 6px">${esc(item.logistics)}</span></div>` : ''}
+                  </div>
+                `;
+              }).join('') : `<div class="smallmuted" style="text-align:center;padding-top:30px;font-size:11.5px">無排定行程</div>`}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  } else {
+    $('#scheduleContainer').innerHTML = `
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>星期</th><th>時間</th><th>類型</th><th>課程／補習／才藝名稱</th><th>地點</th><th>接送與晚餐安排</th><th>操作</th></tr></thead>
+          <tbody>
+            ${rows.map(x => `<tr>
+              <td><span class="tag green">${weekdays[x.day]}</span></td>
+              <td><strong>${esc(x.start)}–${esc(x.end)}</strong></td>
+              <td><span class="tag ${x.kind === '補習班' ? 'gold' : x.kind === '才藝社團' ? 'purple' : 'blue'}">${esc(x.kind || '課程')}</span></td>
+              <td><strong>${esc(x.title)}</strong></td>
+              <td>${esc(x.place || '—')}</td>
+              <td>${esc(x.logistics || '🏠 自行回家/在家用餐')}</td>
+              <td>
+                <div class="rowactions">
+                  <button class="mini" data-edit="schedule:${x.id}">編輯</button>
+                  <button class="mini del" data-del="schedule:${x.id}">刪除</button>
+                </div>
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+}
+
+$('#toggleSchedViewBtn').onclick = () => {
+  scheduleViewMode = scheduleViewMode === 'grid' ? 'list' : 'grid';
+  renderSchedule();
+};
+
+// 3. 渲染考試與作業
+function renderSchool() {
+  const filter = $('#schoolFilter').value;
+  const search = $('#schoolSearch').value.trim().toLowerCase();
+  const rows = schoolRows().filter(x =>
+    (filter === 'all' || filter === x.type || (filter === 'open' && !x.done) || (filter === 'done' && x.done)) &&
+    (`${x.title} ${x.subject || ''} ${x.note || ''}`).toLowerCase().includes(search)
+  );
+  $('#schoolTable').innerHTML = rows.length ? `
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>類型</th><th>日期／預警倒數</th><th>科目／事項名稱</th><th>完成狀態</th><th>操作</th></tr></thead>
+        <tbody>
+          ${rows.map(x => {
+            const dLeft = daysFromToday(x.date);
+            const countdown = !x.date ? '未定' : dLeft === 0 ? '🔥 今天！' : dLeft === 1 ? '⚠️ 明天！' : dLeft === 2 ? '⚡ 後天！' : dLeft > 0 ? `${dLeft} 天後` : '已過期';
+            return `<tr>
+              <td><span class="tag ${x.type === 'exam' ? 'gold' : 'green'}">${x.type === 'exam' ? '📚 考試' : '✏️ 作業/報告'}</span></td>
+              <td><strong>${esc(x.date || '未定')}</strong><div class="itemmeta">${countdown}</div></td>
+              <td>
+                <strong style="${x.done ? 'text-decoration:line-through;color:var(--muted)' : ''}">${esc(x.title)}</strong>
+                <div class="itemmeta"><span class="tag" style="padding:1px 6px;font-size:10px">${esc(x.subject || '未分類')}</span> ${esc(x.note || '')}</div>
+              </td>
+              <td><button class="mini" data-toggle="${x.id}" style="${x.done ? 'background:var(--green2);color:var(--green)' : ''}">${x.done ? '✓ 已完成' : '○ 待完成'}</button></td>
+              <td>
+                <div class="rowactions">
+                  <button class="mini" data-edit="school:${x.id}">編輯</button>
+                  <button class="mini del" data-del="school:${x.id}">刪除</button>
+                </div>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  ` : empty('沒有符合條件的考試或作業事項。');
+}
+
+// 4. 渲染讀書時間規劃與學習目標 Study
+function renderStudy() {
+  const goalHours = Number(data.settings.weeklyStudyGoalHours) || 10;
+  $('#studyWeeklyGoalLabel').textContent = `${goalHours} 小時`;
+
+  $('#quickStudyChips').innerHTML = quickStudyPresets.map((p, idx) => `
+    <button type="button" class="chip-action" data-quick-study="${idx}">
+      <span>📚 ${esc(p.subject)}</span>
+      <span class="amt-pos">+${p.mins} 分鐘</span>
+    </button>
+  `).join('');
+
+  const subTotals = {};
+  let totalMins = 0;
+  data.studyLogs.forEach(l => {
+    const m = Number(l.mins || 0);
+    totalMins += m;
+    subTotals[l.subject] = (subTotals[l.subject] || 0) + m;
+  });
+  const totalHours = Math.round((totalMins / 60) * 10) / 10;
+  $('#studyTotalWeekLabel').textContent = `累計 ${totalHours} 小時（${totalMins} 分鐘）`;
+
+  const entries = Object.entries(subTotals).sort((a, b) => b[1] - a[1]);
+  const maxM = Math.max(60, ...entries.map(e => e[1]));
+  $('#studySubjectBars').innerHTML = entries.length ? entries.map(([sub, mins]) => `
+    <div class="barrow">
+      <span><strong>${esc(sub)}</strong></span>
+      <div class="bartrack"><div class="barfill" style="width:${(mins / maxM) * 100}%"></div></div>
+      <strong style="text-align:right">${mins} 分</strong>
+    </div>
+  `).join('') : empty('尚無讀書打卡紀錄，點上方快記按鈕或啟動番茄鐘吧！');
+
+  $('#studyGoalsList').innerHTML = `
+    <div class="list">
+      ${data.goals.map(g => `
+        <div class="listitem">
+          <button class="mini" data-toggle-goal="${g.id}">${g.done ? '✓ 已達成' : '○ 進行中'}</button>
+          <div class="itemmain">
+            <div class="itemtitle" style="${g.done ? 'text-decoration:line-through;color:var(--muted)' : ''}">${esc(g.title)}</div>
+            <div class="bartrack" style="height:6px;margin-top:5px"><div class="barfill" style="width:${g.done ? 100 : (g.progress || 60)}%"></div></div>
+          </div>
+          <button class="mini del" data-del="goals:${g.id}">删</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  const logs = [...data.studyLogs].reverse();
+  $('#studyLogsTable').innerHTML = logs.length ? `
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>日期</th><th>研讀科目</th><th>時長</th><th>學習重點備註</th><th>操作</th></tr></thead>
+        <tbody>
+          ${logs.map(l => `<tr>
+            <td>${esc(l.date)}</td>
+            <td><span class="tag green">${esc(l.subject)}</span></td>
+            <td><strong>${l.mins} 分鐘</strong></td>
+            <td>${esc(l.note || '自主專注溫書')}</td>
+            <td><button class="mini del" data-del="studyLogs:${l.id}">刪除</button></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  ` : empty('尚無讀書紀錄。');
+}
+
+// 番茄鐘計時邏輯
+function updateTimerDisplay() {
+  const m = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+  const s = String(timerSeconds % 60).padStart(2, '0');
+  $('#timerDisplay').textContent = `${m}:${s}`;
+}
+$('#timerStartBtn').onclick = () => {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    $('#timerStartBtn').textContent = '▶ 繼續專注';
+  } else {
+    $('#timerStartBtn').textContent = '⏸ 暫停';
+    timerInterval = setInterval(() => {
+      if (timerSeconds > 0) {
+        timerSeconds--;
+        updateTimerDisplay();
+      } else {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        $('#timerStartBtn').textContent = '▶ 開始專注';
+        const sub = $('#timerSubjectSelect').value;
+        const minsDone = Math.round(timerTotalSeconds / 60);
+        data.studyLogs.push({ id: uid(), date: todayISO(), subject: sub, mins: minsDone, note: `完成番茄鐘專注 ${minsDone} 分鐘` });
+        save();
+        renderAll();
+        showToast(`🎉 太棒了！已完成 ${sub} ${minsDone} 分鐘專注，自動計入本週讀書時數！`);
+        timerSeconds = timerTotalSeconds;
+        updateTimerDisplay();
+      }
+    }, 1000);
+  }
+};
+$('#timerMode25Btn').onclick = () => { clearInterval(timerInterval); timerInterval = null; timerTotalSeconds = 25 * 60; timerSeconds = timerTotalSeconds; $('#timerStartBtn').textContent = '▶ 開始專注'; updateTimerDisplay(); };
+$('#timerMode50Btn').onclick = () => { clearInterval(timerInterval); timerInterval = null; timerTotalSeconds = 50 * 60; timerSeconds = timerTotalSeconds; $('#timerStartBtn').textContent = '▶ 開始專注'; updateTimerDisplay(); };
+$('#timerResetBtn').onclick = () => { clearInterval(timerInterval); timerInterval = null; timerSeconds = timerTotalSeconds; $('#timerStartBtn').textContent = '▶ 開始專注'; updateTimerDisplay(); };
+
+// 5. 渲染成績追蹤與折線圖
+function renderGrades() {
+  const pillSubjects = ['全部平均', ...subjectsList];
+  $('#gradeSubjectPills').innerHTML = pillSubjects.map(sub => `
+    <button type="button" class="pill-btn ${selectedGradeSubject === sub ? 'active' : ''}" data-grade-sub="${sub}">${sub}</button>
+  `).join('');
+
+  const allSorted = gradeRows();
+  let chartPoints = [];
+
+  if (selectedGradeSubject === '全部平均') {
+    const groups = new Map();
+    allSorted.forEach(g => {
+      const key = `${g.date || ''}_${g.examName}`;
+      if (!groups.has(key)) {
+        groups.set(key, { examName: g.examName, date: g.date, scores: [], targets: [], classAvgs: [], subjects: [] });
+      }
+      const grp = groups.get(key);
+      grp.scores.push(Number(g.score));
+      if (g.target) grp.targets.push(Number(g.target));
+      if (g.classAvg) grp.classAvgs.push(Number(g.classAvg));
+      grp.subjects.push(`${g.subject}:${g.score}`);
+    });
+    chartPoints = [...groups.values()].map(grp => ({
+      label: grp.examName,
+      date: grp.date,
+      score: Math.round((grp.scores.reduce((a, b) => a + b, 0) / grp.scores.length) * 10) / 10,
+      target: grp.targets.length ? Math.round(grp.targets.reduce((a, b) => a + b, 0) / grp.targets.length) : 85,
+      classAvg: grp.classAvgs.length ? Math.round(grp.classAvgs.reduce((a, b) => a + b, 0) / grp.classAvgs.length) : null,
+      detail: grp.subjects.join(' / ')
+    }));
+  } else {
+    chartPoints = allSorted
+      .filter(g => g.subject === selectedGradeSubject)
+      .map(g => ({
+        label: g.examName,
+        date: g.date,
+        score: Number(g.score),
+        target: g.target ? Number(g.target) : 85,
+        classAvg: g.classAvg ? Number(g.classAvg) : null,
+        detail: g.note || `${g.subject}單科表現`
+      }));
+  }
+
+  if (chartPoints.length > 0) {
+    const scores = chartPoints.map(p => p.score);
+    const avg = Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) / 10;
+    const max = Math.max(...scores);
+    const latest = chartPoints[chartPoints.length - 1];
+    const prev = chartPoints.length > 1 ? chartPoints[chartPoints.length - 2] : null;
+    const delta = prev ? Math.round((latest.score - prev.score) * 10) / 10 : null;
+    const targetGap = latest.target ? Math.round((latest.score - latest.target) * 10) / 10 : 0;
+
+    $('#gradeStatsCards').innerHTML = `
+      <div class="stat"><div class="stathead">${esc(selectedGradeSubject)}平均</div><div class="statnum">${avg} 分</div><div class="statdesc">共 ${chartPoints.length} 次考試</div></div>
+      <div class="stat"><div class="stathead">最高分紀錄</div><div class="statnum moneypos">${max} 分</div><div class="statdesc">最佳表現</div></div>
+      <div class="stat"><div class="stathead">最新進退步幅度</div><div class="statnum ${delta === null ? '' : delta >= 0 ? 'moneypos' : 'moneyneg'}">${delta === null ? '首筆紀錄' : delta > 0 ? `+${delta} ↗` : delta < 0 ? `${delta} ↘` : '持平 →'}</div><div class="statdesc">${prev ? `前次 ${prev.score} 分` : '持續累積中'}</div></div>
+      <div class="stat"><div class="stathead">距離目標 (${latest.target}分)</div><div class="statnum ${targetGap >= 0 ? 'moneypos' : ''}">${targetGap >= 0 ? `達標 +${targetGap}` : `差 ${Math.abs(targetGap)} 分`}</div><div class="statdesc">最新：${esc(latest.label)}</div></div>
+    `;
+  } else {
+    $('#gradeStatsCards').innerHTML = '';
+  }
+
+  $('#gradeChartBox').innerHTML = chartPoints.length ? buildLineChartSVG(chartPoints) : empty(`尚無「${selectedGradeSubject}」的成績資料。`);
+
+  const filteredRows = selectedGradeSubject === '全部平均' ? [...allSorted].reverse() : [...allSorted].filter(g => g.subject === selectedGradeSubject).reverse();
+  $('#gradeCountLabel').textContent = `顯示 ${filteredRows.length} 筆紀錄`;
+  $('#gradeTable').innerHTML = filteredRows.length ? `
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>日期</th><th>考試名稱</th><th>科目</th><th>得分</th><th>目標分數</th><th>班級平均／備註</th><th>操作</th></tr></thead>
+        <tbody>
+          ${filteredRows.map(g => {
+            const pass = g.target ? Number(g.score) >= Number(g.target) : Number(g.score) >= 80;
+            return `<tr>
+              <td>${esc(g.date || '—')}</td>
+              <td><strong>${esc(g.examName)}</strong></td>
+              <td><span class="tag blue">${esc(g.subject)}</span></td>
+              <td><strong style="font-size:15px" class="${pass ? 'moneypos' : 'moneyneg'}">${g.score} 分</strong></td>
+              <td>${g.target ? `${g.target} 分` : '—'}</td>
+              <td class="smallmuted">${g.classAvg ? `班均 ${g.classAvg} 分` : ''}${g.classAvg && g.note ? ' · ' : ''}${esc(g.note || '')}</td>
+              <td>
+                <div class="rowactions">
+                  <button class="mini" data-edit="grades:${g.id}">編輯</button>
+                  <button class="mini del" data-del="grades:${g.id}">刪除</button>
+                </div>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  ` : empty('沒有符合此科目的成績紀錄。');
+}
+
+function buildLineChartSVG(points) {
+  const W = 780, H = 250;
+  const padL = 46, padR = 32, padT = 26, padB = 46;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  const allVals = points.flatMap(p => [p.score, p.target || 85, p.classAvg || p.score]);
+  const minVal = Math.max(0, Math.floor((Math.min(...allVals) - 10) / 10) * 10);
+  const maxVal = Math.min(100, Math.ceil((Math.max(...allVals) + 6) / 10) * 10);
+  const range = Math.max(20, maxVal - minVal);
+
+  const getX = i => points.length === 1 ? padL + plotW / 2 : padL + (i / (points.length - 1)) * plotW;
+  const getY = val => padT + plotH - ((val - minVal) / range) * plotH;
+
+  let gridHTML = '';
+  for (let i = 0; i <= 4; i++) {
+    const v = Math.round(minVal + (range * i) / 4);
+    const y = getY(v);
+    gridHTML += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#e4ebe3" stroke-width="1" /><text x="${padL - 10}" y="${y + 4}" text-anchor="end" font-size="11" fill="#718078">${v}</text>`;
+  }
+
+  const refTarget = points[points.length - 1].target || 85;
+  const targetY = getY(refTarget);
+  const targetLineHTML = `<line x1="${padL}" y1="${targetY}" x2="${W - padR}" y2="${targetY}" stroke="#d99c46" stroke-width="2" stroke-dasharray="6 4" /><rect x="${W - padR - 64}" y="${targetY - 18}" width="64" height="16" rx="4" fill="#fff4e0" /><text x="${W - padR - 32}" y="${targetY - 7}" text-anchor="middle" font-size="10" font-weight="700" fill="#99651e">目標 ${refTarget}分</text>`;
+
+  const classPoints = points.map((p, i) => p.classAvg ? `${getX(i)},${getY(p.classAvg)}` : null).filter(Boolean);
+  const classPolyline = classPoints.length > 1 ? `<polyline fill="none" stroke="#b0c2b7" stroke-width="2" stroke-dasharray="3 3" points="${classPoints.join(' ')}" />` : '';
+
+  const coords = points.map((p, i) => ({ x: getX(i), y: getY(p.score), ...p }));
+  const lineStr = coords.map(c => `${c.x},${c.y}`).join(' ');
+  const areaStr = `${coords[0].x},${padT + plotH} ${lineStr} ${coords[coords.length - 1].x},${padT + plotH}`;
+
+  const nodesHTML = coords.map(c => `
+    <g>
+      ${c.classAvg ? `<circle cx="${c.x}" cy="${getY(c.classAvg)}" r="4" fill="#9ab0a3"><title>班級平均：${c.classAvg} 分</title></circle>` : ''}
+      <circle cx="${c.x}" cy="${c.y}" r="6" fill="#356b50" stroke="#ffffff" stroke-width="2.5"><title>${esc(c.label)}：${c.score} 分</title></circle>
+      <rect x="${c.x - 20}" y="${c.y - 26}" width="40" height="18" rx="6" fill="#356b50" />
+      <text x="${c.x}" y="${c.y - 13}" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">${c.score}</text>
+      <text x="${c.x}" y="${H - 22}" text-anchor="middle" font-size="11.5" font-weight="700" fill="#26352e">${esc(c.label.slice(0, 7))}</text>
+      <text x="${c.x}" y="${H - 7}" text-anchor="middle" font-size="10" fill="#718078">${fmtDate(c.date)}</text>
+    </g>
+  `).join('');
+
+  return `<svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="scoreGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#356b50" stop-opacity="0.22"/><stop offset="100%" stop-color="#356b50" stop-opacity="0.0"/></linearGradient></defs>${gridHTML}${targetLineHTML}${coords.length > 1 ? `<polygon points="${areaStr}" fill="url(#scoreGrad)" />` : ''}${classPolyline}${coords.length > 1 ? `<polyline fill="none" stroke="#356b50" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${lineStr}" />` : ''}${nodesHTML}</svg>`;
+}
+
+// 6. 渲染零用錢收支 (核心：學生視角快記+明細 vs 家長視角只看趴數%)
+function renderFinance() {
+  $('#financeWishArea').innerHTML = `<div class="wish-card">${renderWishCardHTML()}</div>`;
+  const m = monthISO();
+
+  if (currentRole === 'parent') {
+    $('#financePageTitle').textContent = '零用錢預算趴數（%）總覽（家長視角）';
+    $('#financePageSub').textContent = '為保留孩子的個人消費隱私，家長視角僅顯示各分類百分比（%）與儲蓄目標達成率，不顯示單筆消費明細。';
+    $('#addTransaction').style.display = 'none';
+
+    $('#financeRoleContent').innerHTML = `
+      <div class="privacy-shield-card">
+        <div class="privacy-shield-icon">🛡️</div>
+        <div style="flex:1">
+          <div style="font-weight:780;font-size:14.5px;color:#2c4c63">親子信任隱私模式已啟用（家長端僅顯示百分比 %）</div>
+          <div class="smallmuted" style="margin-top:3px">
+            孩子在「學生視角」使用 1 秒快記管理自己的日常花費與儲蓄。您在這裡可以看到錢花在哪些大方向的<strong>結構趴數（%）</strong>，既能引導孩子掌握預算比例，又不會讓孩子覺得每買一杯飲料都被監視！
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panelhead">
+          <h3><span>📊</span> 本月支出分類結構趴數（${m}）</h3>
+          <span class="tag blue">隱私脫敏統計</span>
+        </div>
+        ${renderCategoryPercentageViewHTML(m)}
+      </div>
+    `;
+    return;
+  }
+
+  // 學生視角：顯示完整 1 秒快記面板 + 自訂秒記列 + 個人收支明細表
+  $('#financePageTitle').textContent = '我的零用錢 1 秒快記與私人帳本';
+  $('#financePageSub').textContent = '點一下按鈕 1 秒記帳！這裡的單筆明細與備註只有你自己看得到，家長視角只會看到分類趴數（%）。';
+  $('#addTransaction').style.display = 'inline-flex';
+
+  const currentMonth = $('#financeMonth')?.value || m;
+  const rows = monthRows(currentMonth).sort((a, b) => b.date.localeCompare(a.date));
+  const tt = totals(rows);
+
+  $('#financeRoleContent').innerHTML = `
+    <div class="quick-pad">
+      <div class="quick-pad-head">
+        <div class="quick-pad-title">⚡ 1 秒按鍵快記（點一下直接入帳，可隨時復原）：</div>
+        <span class="privacy-pill">🔒 僅學生本人可見 · 家長只看得到趴數(%)</span>
+      </div>
+      <div class="quick-chips-list">
+        ${quickFinancePresets.map((p, idx) => `
+          <button type="button" class="chip-action" data-quick-tx="${idx}">
+            <span>${esc(p.label)}</span>
+            <span class="${p.type === 'income' ? 'amt-pos' : 'amt-neg'}">${p.type === 'income' ? '+' : '-'}${p.amount}</span>
+          </button>
+        `).join('')}
+      </div>
+      <!-- 自訂金額 1 秒輸入列 -->
+      <div class="instant-bar">
+        <span class="smallmuted" style="font-weight:700">⚡ 自訂金額秒記：</span>
+        <select id="instantType">
+          <option value="expense">↘ 支出</option>
+          <option value="income">↗ 收入</option>
+        </select>
+        <select id="instantCategory">
+          <option value="餐費">🍱 餐費</option>
+          <option value="文具／學用品">📓 文具／學用品</option>
+          <option value="交通">🚌 交通</option>
+          <option value="娛樂">🎮 娛樂</option>
+          <option value="儲蓄">🐷 儲蓄</option>
+          <option value="零用錢">💰 零用錢</option>
+          <option value="其他">📦 其他</option>
+        </select>
+        <input type="number" id="instantAmount" placeholder="輸入金額 (如 65)" min="1">
+        <input type="text" id="instantNote" placeholder="備註 (選填，家長看不到)">
+        <button type="button" class="btn primary" id="instantSubmitBtn" style="padding:7px 14px">＋ 1秒入帳</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panelhead">
+        <h3><span>📋</span> 我的私人收支明細表 <span class="tag green">🔒 家長視角已隱藏此表</span></h3>
+        <div class="monthbar">
+          <label for="financeMonth" style="margin:0">月份</label>
+          <input type="month" id="financeMonth" value="${currentMonth}">
+        </div>
+      </div>
+
+      <div class="cards" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:14px">
+        <div class="stat"><div class="stathead">本月收入</div><div class="statnum moneypos" style="font-size:21px">${money(tt.income)}</div></div>
+        <div class="stat"><div class="stathead">本月支出</div><div class="statnum moneyneg" style="font-size:21px">${money(tt.expense)}</div></div>
+        <div class="stat"><div class="stathead">目前可用結餘</div><div class="statnum" style="font-size:21px">${money(tt.income - tt.expense)}</div></div>
+      </div>
+
+      ${rows.length ? `
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>日期</th><th>類型</th><th>分類</th><th>私人備註細項（家長不可見）</th><th>金額</th><th>操作</th></tr></thead>
+            <tbody>
+              ${rows.map(x => `<tr>
+                <td>${esc(x.date)}</td>
+                <td><span class="tag ${x.type === 'income' ? 'green' : 'red'}">${x.type === 'income' ? '收入' : '支出'}</span></td>
+                <td><strong>${esc(x.category)}</strong></td>
+                <td>${esc(x.note || '—')}</td>
+                <td class="${x.type === 'income' ? 'moneypos' : 'moneyneg'}">${x.type === 'income' ? '+' : '−'}${money(x.amount)}</td>
+                <td>
+                  <div class="rowactions">
+                    <button class="mini" data-edit="transactions:${x.id}">編輯</button>
+                    <button class="mini del" data-del="transactions:${x.id}">刪除</button>
+                  </div>
+                </td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      ` : empty('這個月份還沒有收支紀錄，點上方「⚡ 1 秒按鍵快記」試試看！')}
+    </div>
+  `;
+
+  // 重新綁定動態生成的月份選擇器與自訂秒記按鈕
+  $('#financeMonth')?.addEventListener('change', renderFinance);
+  $('#instantSubmitBtn')?.addEventListener('click', () => {
+    const amt = Number($('#instantAmount').value);
+    if (!amt || amt <= 0) {
+      showToast('請輸入大於 0 的金額');
+      return;
+    }
+    const newTx = {
+      id: uid(),
+      type: $('#instantType').value,
+      date: todayISO(),
+      category: $('#instantCategory').value,
+      amount: amt,
+      note: $('#instantNote').value.trim() || $('#instantCategory').value
+    };
+    data.transactions.push(newTx);
+    save();
+    renderAll();
+    showToast(`⚡ 已秒記：${newTx.category} ${money(newTx.amount)}`, '復原', () => {
+      data.transactions = data.transactions.filter(t => t.id !== newTx.id);
+      save();
+      renderAll();
+    });
+  });
+}
+
+// 7. 渲染月度趴數統計 Reports (完全以百分比呈現)
+function renderReports() {
+  const m = $('#reportMonth').value || monthISO();
+  const pctStats = getPrivacyPercentageStats(m);
+  const rows = monthRows(m);
+  const tt = totals(rows);
+
+  if (currentRole === 'parent' || (data.transactions.length === 0 && data.sanitizedSummary)) {
+    $('#reportTopCards').innerHTML = `
+      <div class="stat"><div class="stathead">本月預算已使用率</div><div class="statnum moneyneg">${pctStats.usedPct}%</div><div class="statdesc">依本月總收入計算</div></div>
+      <div class="stat"><div class="stathead">本月剩餘結餘率</div><div class="statnum moneypos">${pctStats.remainPct}%</div><div class="statdesc">保留彈性空間</div></div>
+      <div class="stat"><div class="stathead">儲蓄願望達成率</div><div class="statnum" style="color:var(--green)">${pctStats.wishPct}%</div><div class="statdesc">${esc(pctStats.wishTitle)}</div></div>
+    `;
+  } else {
+    $('#reportTopCards').innerHTML = `
+      <div class="stat"><div class="stathead">本月預算使用率</div><div class="statnum moneyneg">${pctStats.usedPct}%</div><div class="statdesc">總支出 ${money(tt.expense)}</div></div>
+      <div class="stat"><div class="stathead">本月剩餘結餘率</div><div class="statnum moneypos">${pctStats.remainPct}%</div><div class="statdesc">結餘 ${money(tt.income - tt.expense)}</div></div>
+      <div class="stat"><div class="stathead">儲蓄願望達成率</div><div class="statnum" style="color:var(--green)">${pctStats.wishPct}%</div><div class="statdesc">${esc(pctStats.wishTitle)}</div></div>
+    `;
+  }
+
+  $('#categoryBars').innerHTML = renderCategoryPercentageViewHTML(m);
+
+  const months = [];
+  const d = new Date((m || monthISO()) + '-01T12:00:00');
+  for (let i = 5; i >= 0; i--) {
+    const x = new Date(d.getFullYear(), d.getMonth() - i, 1);
+    months.push(`${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}`);
+  }
+  const six = months.map(mm => {
+    const st = getPrivacyPercentageStats(mm);
+    return { m: mm, usedPct: st.usedPct, remainPct: st.remainPct };
+  });
+
+  $('#sixMonthReport').innerHTML = six.map(x => `
+    <div style="margin:13px 0">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+        <strong>${x.m}</strong>
+        <span>已使用 ${x.usedPct}% ／ 剩餘結餘 ${x.remainPct}%</span>
+      </div>
+      <div class="bartrack" style="height:10px;display:flex">
+        <div style="width:${x.usedPct}%;background:#d38a7e;height:100%"></div>
+        <div style="width:${x.remainPct}%;background:#6d9d7d;height:100%"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSettings() {
+  $('#familyName').value = data.settings.familyName || '';
+  $('#weeklyStudyGoalInput').value = data.settings.weeklyStudyGoalHours || 10;
+  $('#wishTitleInput').value = data.settings.wishTitle || '';
+  $('#wishTargetInput').value = data.settings.wishTarget || 2500;
+  $('#studentPinInput').value = data.settings.studentPin || '';
+  $('#parentNoteInput').value = data.settings.parentNote || '';
+}
+
+// 產生「💬 LINE 家庭回報卡 ＋ 家長專用隱私脫敏同步碼」Modal
+function openLineCardModal() {
+  const m = monthISO();
+  const pctStats = getPrivacyPercentageStats(m);
+  const weekMins = data.studyLogs.reduce((s, l) => s + Number(l.mins || 0), 0);
+  const weekHours = Math.round((weekMins / 60) * 10) / 10;
+
+  // 整理今明後三天重點
+  const threeDaysText = [0, 1, 2].map(offset => {
+    const iso = daysAgoISO(-offset);
+    const label = offset === 0 ? '今天' : offset === 1 ? '明天' : '後天';
+    const wIdx = getWeekdayIndex(iso);
+    const exams = data.school.filter(x => x.date === iso && !x.done).map(x => `[${x.type === 'exam' ? '考試' : '作業'}] ${x.subject}:${x.title}`);
+    const scheds = data.schedule.filter(s => Number(s.day) === wIdx).map(s => `${s.start} ${s.title}${s.logistics && !s.logistics.startsWith('🏠') ? '(' + s.logistics + ')' : ''}`);
+    const all = [...exams, ...scheds];
+    return `▫️ ${label}(${fmtDate(iso)})：${all.length ? all.join('、') : '無特別排程'}`;
+  }).join('\n');
+
+  const pctStr = pctStats.breakdown.length
+    ? pctStats.breakdown.map(b => `${b.category} ${b.pct}%`).join('、')
+    : '尚無支出紀錄';
+
+  const lineText = `📋【${data.settings.familyName || '家有計畫'}｜本週學習與行程回報】
+📡 今明後三天行程與考試預警：
+${threeDaysText}
+
+⏱ 本週自主讀書：已累計 ${weekHours} 小時（目標 ${data.settings.weeklyStudyGoalHours || 10} 小時）
+🎯 儲蓄願望（${pctStats.wishTitle}）：達成率 ${pctStats.wishPct}%
+📊 本月零用錢結構（隱私模式僅顯示趴數）：
+已用 ${pctStats.usedPct}% / 剩餘 ${pctStats.remainPct}%（${pctStr}）`;
+
+  // 打包「家長專用隱私脫敏同步碼」：徹底移除 data.transactions 細項！
+  const sanitizedPayload = {
+    schedule: data.schedule,
+    school: data.school,
+    grades: data.grades,
+    studyLogs: data.studyLogs,
+    goals: data.goals,
+    transactions: [], // 物理清空所有消費細項！
+    sanitizedSummary: pctStats, // 只傳送百分比統計！
+    settings: { ...data.settings, studentPin: '' }
+  };
+  const syncCode = btoa(unescape(encodeURIComponent(JSON.stringify(sanitizedPayload))));
+
+  modalType = 'line_card';
+  $('#modalTitle').textContent = '💬 LINE 家庭回報卡 ＆ 隱私脫敏同步';
+  $('#modalFooterActions').style.display = 'none';
+  $('#modalFields').innerHTML = `
+    <div class="notice" style="margin-top:0;background:var(--green2);color:#244d38">
+      <strong>🛡️ 100% 物理隔離保護：</strong>下方產生的「LINE 訊息」與「給爸媽的同步碼」<strong>已經在底層徹底剔除所有單筆收支明細與備註</strong>，爸媽貼到自己的手機上只看得到課表、三天考試預警與消費分類趴數（%）！
+    </div>
+    <div class="field">
+      <label>1️⃣ 一鍵複製 LINE 家庭回報訊息（直接貼到家庭群組）</label>
+      <textarea id="lineReportTextarea" rows="8" readonly style="font-size:12.5px;background:#fafcf9">${esc(lineText)}</textarea>
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <button type="button" class="btn primary" id="copyLineTextBtn">📋 複製 LINE 回報文字</button>
+      </div>
+    </div>
+    <div class="field" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line)">
+      <label>2️⃣ 跨手機同步：複製「家長專用（無明細）同步碼」給爸媽</label>
+      <div style="display:flex;gap:8px">
+        <input id="syncCodeOutput" readonly value="${syncCode}" style="font-size:11.5px;background:#f4f7f4">
+        <button type="button" class="btn soft" id="copySyncCodeBtn" style="white-space:nowrap">複製脫敏同步碼</button>
+      </div>
+    </div>
+    <div class="field" style="margin-top:14px">
+      <label>📥 家長手機收到同步碼？在此貼上即可更新畫面：</label>
+      <div style="display:flex;gap:8px">
+        <input id="syncCodeInput" placeholder="在此貼上孩子傳來的同步碼…">
+        <button type="button" class="btn blue" id="applySyncCodeBtn" style="white-space:nowrap">套用同步碼</button>
+      </div>
+    </div>
+  `;
+  $('#modalBack').classList.add('open');
+
+  $('#copyLineTextBtn').onclick = () => {
+    const ta = $('#lineReportTextarea');
+    ta.select();
+    document.execCommand('copy');
+    showToast('✅ 已複製 LINE 回報卡文字！可直接貼到家庭 LINE 群組。');
+  };
+  $('#copySyncCodeBtn').onclick = () => {
+    const inp = $('#syncCodeOutput');
+    inp.select();
+    document.execCommand('copy');
+    showToast('🛡️ 已複製「隱私脫敏同步碼」（不含任何消費細項）！');
+  };
+  $('#applySyncCodeBtn').onclick = () => {
+    const rawCode = $('#syncCodeInput').value.trim();
+    if (!rawCode) {
+      showToast('請先貼上同步碼');
+      return;
+    }
+    try {
+      const obj = JSON.parse(decodeURIComponent(escape(atob(rawCode))));
+      data = { ...structuredClone(defaults), ...obj };
+      currentRole = 'parent'; // 套用家長同步碼後自動切為家長視角
+      save();
+      closeModal();
+      renderAll();
+      showToast('🎉 同步成功！已載入最新課表、考試預警與支出趴數（%）。');
+    } catch (e) {
+      showToast('❌ 同步碼格式不正確，請確認是否完整複製。');
+    }
+  };
+}
+
+// 產生「📥 免手動打字！智慧文字貼上解析 ＋ .ics 行事曆匯入匯出」Modal
+function openSmartImportModal() {
+  modalType = 'smart_import';
+  $('#modalTitle').textContent = '📥 免打字智慧解析 ＆ 手機行事曆 (.ics) 整合';
+  $('#modalFooterActions').style.display = 'none';
+  $('#modalFields').innerHTML = `
+    <div class="field">
+      <label>📋 方式一：直接貼上老師 LINE 聯絡簿、考試範圍或補習班時間文字</label>
+      <div class="smallmuted" style="margin-bottom:6px">系統會自動辨識「星期幾＋時間（自動歸入整週課表）」或「日期＋科目考試/作業（自動歸入考試與三天雷達）」：</div>
+      <textarea id="smartPasteArea" rows="5" placeholder="例如：\n週三 18:30-21:00 物理補習 台大文理3F 需家長接送\n週六 14:00-16:00 鋼琴才藝課 音樂教室\n10/28 數學小考 三角函數全\n10/29 英文報告 雜誌Unit4口頭發表"></textarea>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;flex-wrap:wrap;gap:8px">
+        <button type="button" class="btn soft" id="fillSampleSmartTextBtn">✨ 帶入範例聯絡簿與補習文字試試看</button>
+        <button type="button" class="btn primary" id="runSmartParseBtn">⚡ 智慧解析並自動建檔</button>
+      </div>
+    </div>
+
+    <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--line)">
+      <label>📅 方式二：手機 / Google / Apple 行事曆（.ics 檔案）雙向匯入匯出</label>
+      <p class="smallmuted" style="margin:4px 0 10px">家長無須自己打字！可將學校行事曆 <code>.ics</code> 匯入，或將排好的補習才藝與考試匯出成 <code>.ics</code> 加入手機日曆提醒。</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" class="btn blue" onclick="exportICSCalendar()">📤 匯出 .ics 行事曆檔（加進手機日曆）</button>
+        <button type="button" class="btn" onclick="$('#icsFile').click()">📥 匯入學校/手機 .ics 行事曆檔</button>
+      </div>
+    </div>
+  `;
+  $('#modalBack').classList.add('open');
+
+  $('#fillSampleSmartTextBtn').onclick = () => {
+    const tomorrow = fmtDate(daysAgoISO(-1));
+    const afterTomorrow = fmtDate(daysAgoISO(-2));
+    $('#smartPasteArea').value =
+      `週二 18:30-21:00 英文進度補習 站前文理補習班 需家長接送\n` +
+      `週六 10:00-12:00 素描水彩才藝課 畫室2F\n` +
+      `${tomorrow} 數學隨堂考 直線與圓方程式\n` +
+      `${afterTomorrow} 歷史報告 台灣近代史分組簡報`;
+  };
+
+  $('#runSmartParseBtn').onclick = () => {
+    const lines = $('#smartPasteArea').value.split('\n').map(s => s.trim()).filter(Boolean);
+    if (!lines.length) {
+      showToast('請先貼上文字內容');
+      return;
+    }
+    let addedSched = 0, addedSchool = 0;
+    const dayMap = { '一': 0, '二': 1, '三': 2, '四': 3, '五': 4, '六': 5, '日': 6, '天': 6 };
+
+    lines.forEach(line => {
+      // 檢查是否為固定週課表：例如 "週二 18:30-21:00 英文補習 地點 需接送"
+      const schedMatch = line.match(/(?:週|星期)([一二三四五六日天])\s*(\d{1,2}:\d{2})\s*[-~～至]\s*(\d{1,2}:\d{2})\s+(.+)/);
+      if (schedMatch) {
+        const dayIdx = dayMap[schedMatch[1]] ?? 0;
+        const start = schedMatch[2].padStart(5, '0');
+        const end = schedMatch[3].padStart(5, '0');
+        const parts = schedMatch[4].trim().split(/\s+/);
+        const title = parts[0] || '新增課程';
+        const place = parts[1] || '';
+        const rawRest = parts.slice(1).join(' ');
+        const kind = title.includes('補習') ? '補習班' : (title.includes('才藝') || title.includes('琴') || title.includes('畫') || title.includes('球')) ? '才藝社團' : '學校課程';
+        const logistics = rawRest.includes('接送') ? '🚗 需家長接送' : rawRest.includes('外食') ? '🍱 補習前外食' : '🏠 自行回家/在家用餐';
+        data.schedule.push({ id: uid(), day: dayIdx, start, end, title, kind, place, logistics });
+        addedSched++;
+        return;
+      }
+
+      // 檢查是否為日期事項：例如 "10/28 數學小考 三角函數"
+      const dateMatch = line.match(/(?:(\d{4})[-/])?(\d{1,2})[-/](\d{1,2})\s+(.+)/);
+      const year = new Date().getFullYear();
+      let dateISO = todayISO();
+      let restText = line;
+      if (dateMatch) {
+        const y = dateMatch[1] || year;
+        const m = String(dateMatch[2]).padStart(2, '0');
+        const d = String(dateMatch[3]).padStart(2, '0');
+        dateISO = `${y}-${m}-${d}`;
+        restText = dateMatch[4].trim();
+      }
+      const isExam = /考|測驗|段考|模考/.test(restText);
+      const foundSub = subjectsList.find(s => restText.includes(s)) || '其他';
+      data.school.push({
+        id: uid(),
+        type: isExam ? 'exam' : 'task',
+        date: dateISO,
+        subject: foundSub,
+        title: restText,
+        done: false,
+        note: '由智慧文字解析匯入'
+      });
+      addedSchool++;
+    });
+
+    save();
+    closeModal();
+    renderAll();
+    showToast(`✨ 智慧解析完成！已自動新增 ${addedSched} 筆週課表、${addedSchool} 筆考試/作業。`);
+  };
+}
+
+// 匯出 .ics 行事曆檔
+function exportICSCalendar() {
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//JiayouPlan//FamilySchedule//TW'
+  ];
+  const dtStamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+
+  // 匯出所有考試與作業
+  data.school.forEach(item => {
+    if (!item.date) return;
+    const dStr = item.date.replace(/-/g, '');
+    lines.push(
+      'BEGIN:VEVENT',
+      `UID:school-${item.id}@jiayouplan`,
+      `DTSTAMP:${dtStamp}`,
+      `DTSTART;VALUE=DATE:${dStr}`,
+      `SUMMARY:[${item.type === 'exam' ? '考試' : '作業'}] ${item.subject || ''} ${item.title}`,
+      `DESCRIPTION:${item.note || ''}`,
+      'END:VEVENT'
+    );
+  });
+
+  // 匯出本週課表與補習才藝
+  const today = new Date();
+  const currentWIdx = getWeekdayIndex(todayISO());
+  data.schedule.forEach(s => {
+    const diff = Number(s.day) - currentWIdx;
+    const targetDate = daysAgoISO(-diff).replace(/-/g, '');
+    const st = (s.start || '18:00').replace(':', '') + '00';
+    const et = (s.end || '20:00').replace(':', '') + '00';
+    lines.push(
+      'BEGIN:VEVENT',
+      `UID:sched-${s.id}@jiayouplan`,
+      `DTSTAMP:${dtStamp}`,
+      `DTSTART:${targetDate}T${st}`,
+      `DTEND:${targetDate}T${et}`,
+      'RRULE:FREQ=WEEKLY',
+      `SUMMARY:[${s.kind}] ${s.title}`,
+      `LOCATION:${s.place || ''}`,
+      `DESCRIPTION:${s.logistics || ''}`,
+      'END:VEVENT'
+    );
+  });
+
+  lines.push('END:VCALENDAR');
+  const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `家有計畫行事曆-${todayISO()}.ics`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('📅 已匯出 .ics 行事曆檔！點擊檔案即可加入手機日曆。');
+}
+
+// 匯入 .ics 檔案解析
+$('#icsFile').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = () => {
+    const text = r.result || '';
+    const events = text.split('BEGIN:VEVENT').slice(1);
+    let count = 0;
+    events.forEach(ev => {
+      const sumMatch = ev.match(/SUMMARY[^:]*:(.+)/);
+      const dtMatch = ev.match(/DTSTART[^:]*:(\d{4})(\d{2})(\d{2})/);
+      if (sumMatch && dtMatch) {
+        const title = sumMatch[1].trim();
+        const dateISO = `${dtMatch[1]}-${dtMatch[2]}-${dtMatch[3]}`;
+        const isExam = /考|測驗|模考/.test(title);
+        const sub = subjectsList.find(s => title.includes(s)) || '學校行事曆';
+        data.school.push({ id: uid(), type: isExam ? 'exam' : 'task', date: dateISO, subject: sub, title, done: false, note: '由 .ics 行事曆匯入' });
+        count++;
+      }
+    });
+    save();
+    closeModal();
+    renderAll();
+    showToast(`📥 已成功從 .ics 行事曆匯入 ${count} 項日程！`);
+  };
+  r.readAsText(file);
+  e.target.value = '';
+});
+
+function openPinModal() {
+  showView('settings');
+  setTimeout(() => $('#studentPinInput')?.focus(), 100);
+}
+function openParentEncourageModal() {
+  modalType = 'parent_note';
+  $('#modalTitle').textContent = '💌 寫鼓勵留言給孩子';
+  $('#modalFooterActions').style.display = 'flex';
+  $('#modalFields').innerHTML = `
+    <div class="field">
+      <label>這段話會顯示在孩子打開首頁的最上方：</label>
+      <input name="parentNote" value="${esc(data.settings.parentNote || '')}" maxlength="80" placeholder="例如：看到你這週數學讀書時數達標了，週末帶你去吃火鍋！">
+    </div>
+  `;
+  $('#modalBack').classList.add('open');
+}
+
+// 表單欄位產生器
+function fieldsFor(type, item = {}) {
+  const v = (k, d = '') => esc(item[k] ?? d);
+
+  if (type === 'hub') {
+    return `
+      <div class="quick-hub-grid">
+        <button type="button" class="hub-card" data-open-modal="school">
+          <div class="hub-icon">✎</div>
+          <div class="hub-title">記明天/後天考試作業</div>
+          <div class="hub-desc">自動同步至首頁「今明後三天預警雷達」</div>
+        </button>
+        <button type="button" class="hub-card" data-open-modal="schedule">
+          <div class="hub-icon">🗓</div>
+          <div class="hub-title">加補習／才藝／課表</div>
+          <div class="hub-desc">設定整週固定時間、地點與家長接送需求</div>
+        </button>
+        <button type="button" class="hub-card" data-open-modal="studyLogs">
+          <div class="hub-icon">⏱</div>
+          <div class="hub-title">打卡今日讀書時數</div>
+          <div class="hub-desc">累計每週目標時數，展現自律成果</div>
+        </button>
+        <button type="button" class="hub-card" data-open-modal="grades">
+          <div class="hub-icon">📈</div>
+          <div class="hub-title">登錄考試成績</div>
+          <div class="hub-desc">記錄段考/模考/小考分數，繪製趨勢折線圖</div>
+        </button>
+      </div>
+    `;
+  }
+
+  if (type === 'schedule') {
+    return `
+      <div class="formgrid">
+        <div class="field">
+          <label>星期 *</label>
+          <select name="day" required>${weekdays.map((w, i) => `<option value="${i}" ${Number(item.day ?? 0) === i ? 'selected' : ''}>${w}</option>`).join('')}</select>
+        </div>
+        <div class="field">
+          <label>行程類型 *</label>
+          <select name="kind">
+            <option ${item.kind === '補習班' ? 'selected' : ''}>補習班</option>
+            <option ${item.kind === '才藝社團' ? 'selected' : ''}>才藝社團</option>
+            <option ${item.kind === '學校課程' ? 'selected' : ''}>學校課程</option>
+            <option ${item.kind === '自主複習' ? 'selected' : ''}>自主複習</option>
+          </select>
+        </div>
+        <div class="field"><label>開始時間 *</label><input type="time" name="start" value="${v('start', '18:30')}" required></div>
+        <div class="field"><label>結束時間 *</label><input type="time" name="end" value="${v('end', '21:00')}" required></div>
+        <div class="field full"><label>課程／補習／才藝名稱 *</label><input name="title" value="${v('title')}" required maxlength="100" placeholder="例如：高一數學進度班、吉他才藝課"></div>
+        <div class="field"><label>上課地點／教室</label><input name="place" value="${v('place')}" maxlength="80" placeholder="例如：站前文理補習班 4F"></div>
+        <div class="field">
+          <label>🚗 家長接送與晚餐狀態</label>
+          <select name="logistics">
+            ${logisticsList.map(l => `<option ${item.logistics === l ? 'selected' : ''}>${l}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    `;
+  }
+
+  if (type === 'school') {
+    return `
+      <div class="formgrid">
+        <div class="field">
+          <label>事項類型 *</label>
+          <select name="type">
+            <option value="exam" ${item.type === 'exam' ? 'selected' : ''}>📚 考試／小考／模考</option>
+            <option value="task" ${item.type === 'task' ? 'selected' : ''}>✏️ 作業／報告／學習單</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>日期（可點下方快速選今/明/後天）</label>
+          <input type="date" name="date" id="schoolDateInput" value="${v('date', daysAgoISO(-1))}">
+          <div class="pill-bar">
+            <button type="button" class="pill-btn" data-fill-target="#schoolDateInput" data-fill-val="${todayISO()}">今天</button>
+            <button type="button" class="pill-btn" data-fill-target="#schoolDateInput" data-fill-val="${daysAgoISO(-1)}">明天</button>
+            <button type="button" class="pill-btn" data-fill-target="#schoolDateInput" data-fill-val="${daysAgoISO(-2)}">後天</button>
+          </div>
+        </div>
+        <div class="field full">
+          <label>科目</label>
+          <input name="subject" id="schoolSubjectInput" value="${v('subject', '數學')}" maxlength="60">
+          <div class="pill-bar">
+            ${subjectsList.map(s => `<button type="button" class="pill-btn" data-fill-target="#schoolSubjectInput" data-fill-val="${s}">${s}</button>`).join('')}
+          </div>
+        </div>
+        <div class="field full"><label>考試範圍或作業報告名稱 *</label><input name="title" value="${v('title')}" required maxlength="120" placeholder="例如：三角函數隨堂考、英文雜誌 Unit 5 報告"></div>
+        <div class="field">
+          <label>完成狀態</label>
+          <select name="done">
+            <option value="false" ${!item.done ? 'selected' : ''}>○ 未完成</option>
+            <option value="true" ${item.done ? 'selected' : ''}>✓ 已完成</option>
+          </select>
+        </div>
+        <div class="field"><label>準備重點備註</label><input name="note" value="${v('note')}" maxlength="120" placeholder="例如：熟記公式與習作錯題"></div>
+      </div>
+    `;
+  }
+
+  if (type === 'studyLogs') {
+    return `
+      <div class="formgrid">
+        <div class="field"><label>日期 *</label><input type="date" name="date" value="${v('date', todayISO())}" required></div>
+        <div class="field">
+          <label>研讀科目 *</label>
+          <select name="subject">${subjectsList.map(s => `<option ${item.subject === s ? 'selected' : ''}>${s}</option>`).join('')}</select>
+        </div>
+        <div class="field"><label>讀書時長（分鐘） *</label><input type="number" name="mins" value="${v('mins', '45')}" min="5" max="600" step="5" required></div>
+        <div class="field"><label>學習內容備註</label><input name="note" value="${v('note')}" placeholder="例如：整理自然科實驗筆記"></div>
+      </div>
+    `;
+  }
+
+  if (type === 'goals') {
+    return `
+      <div class="formgrid">
+        <div class="field full"><label>學習目標名稱 *</label><input name="title" value="${v('title')}" required placeholder="例如：第二次段考班排前進 5 名、背完 500 個核心單字"></div>
+        <div class="field"><label>目前達成進度 (%)</label><input type="number" name="progress" value="${v('progress', '50')}" min="0" max="100"></div>
+      </div>
+    `;
+  }
+
+  if (type === 'grades') {
+    return `
+      <div class="formgrid">
+        <div class="field full">
+          <label>考試名稱 *</label>
+          <input name="examName" id="formExamName" value="${v('examName', '第二次段考')}" required maxlength="60">
+          <div class="pill-bar">
+            ${examPresets.map(ex => `<button type="button" class="pill-btn" data-fill-target="#formExamName" data-fill-val="${ex}">${ex}</button>`).join('')}
+          </div>
+        </div>
+        <div class="field full">
+          <label>科目 *</label>
+          <input name="subject" id="formSubject" value="${v('subject', '數學')}" required maxlength="30">
+          <div class="pill-bar">
+            ${subjectsList.map(s => `<button type="button" class="pill-btn" data-fill-target="#formSubject" data-fill-val="${s}">${s}</button>`).join('')}
+          </div>
+        </div>
+        <div class="field"><label>實際得分 (0–100) *</label><input type="number" name="score" value="${v('score')}" min="0" max="100" step="0.5" required placeholder="例如：88"></div>
+        <div class="field"><label>個人目標分數</label><input type="number" name="target" value="${v('target', '85')}" min="0" max="100" step="1"></div>
+        <div class="field"><label>考試日期 *</label><input type="date" name="date" value="${v('date', todayISO())}" required></div>
+        <div class="field"><label>班級平均（選填）</label><input type="number" name="classAvg" value="${v('classAvg')}" min="0" max="100" step="0.5"></div>
+        <div class="field full"><label>考後檢討小筆記</label><input name="note" value="${v('note')}" maxlength="120" placeholder="例如：大題全對，選擇題粗心 1 題"></div>
+      </div>
+    `;
+  }
+
+  if (type === 'transactions') {
+    return `
+      <div class="notice" style="margin-top:0">🔒 此筆明細與備註僅在「學生視角」顯示，家長視角只會計入分類百分比（%）。</div>
+      <div class="formgrid">
+        <div class="field">
+          <label>收支類型 *</label>
+          <select name="type">
+            <option value="expense" ${item.type !== 'income' ? 'selected' : ''}>↘ 支出</option>
+            <option value="income" ${item.type === 'income' ? 'selected' : ''}>↗ 收入</option>
+          </select>
+        </div>
+        <div class="field"><label>日期 *</label><input type="date" name="date" value="${v('date', todayISO())}" required></div>
+        <div class="field">
+          <label>分類 *</label>
+          <select name="category">
+            ${['餐費', '文具／學用品', '交通', '娛樂', '儲蓄', '零用錢', '補習／才藝', '其他'].map(c => `<option ${item.category === c ? 'selected' : ''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field"><label>金額（NT$） *</label><input type="number" name="amount" value="${v('amount')}" min="1" step="1" required placeholder="例如：100"></div>
+        <div class="field full"><label>私人備註說明（家長看不到）</label><input name="note" value="${v('note')}" maxlength="120" placeholder="例如：買珍珠奶茶、漫畫、參考書"></div>
+      </div>
+    `;
+  }
+}
+
+function openModal(type, item = null) {
+  modalType = type;
+  editing = item ? item.id : null;
+  const labels = {
+    hub: '選擇快速紀錄項目',
+    grades: '考試成績紀錄',
+    schedule: '整週課表／補習／才藝時段',
+    school: '考試與作業事項',
+    studyLogs: '讀書時間打卡',
+    goals: '學習目標',
+    transactions: '私人零用錢收支'
+  };
+  $('#modalTitle').textContent = type === 'hub' ? labels.hub : (item ? '編輯' : '新增') + (labels[type] || '');
+  $('#modalFields').innerHTML = fieldsFor(type, item || {});
+  $('#modalFooterActions').style.display = type === 'hub' ? 'none' : 'flex';
+  $('#modalBack').classList.add('open');
+}
+
+function closeModal() {
+  $('#modalBack').classList.remove('open');
+  $('#modalForm').reset();
+  editing = null;
+  modalType = null;
+}
+
+$('#closeModal').onclick = closeModal;
+$('#cancelModal').onclick = closeModal;
+$('#modalBack').addEventListener('click', e => { if (e.target === $('#modalBack')) closeModal(); });
+
+$('#modalForm').addEventListener('submit', e => {
+  e.preventDefault();
+  if (!modalType || modalType === 'hub') return;
+
+  const fd = new FormData(e.target);
+  const o = Object.fromEntries(fd.entries());
+
+  if (modalType === 'parent_note') {
+    data.settings.parentNote = (o.parentNote || '').trim();
+    save();
+    closeModal();
+    renderAll();
+    showToast('💌 已更新給孩子的鼓勵留言！');
+    return;
+  }
+
+  if (modalType === 'schedule') o.day = Number(o.day);
+  if (modalType === 'school') o.done = o.done === 'true';
+  if (modalType === 'studyLogs') o.mins = Number(o.mins) || 30;
+  if (modalType === 'goals') { o.progress = Number(o.progress) || 50; o.done = o.progress >= 100; }
+  if (modalType === 'grades') {
+    o.score = Number(o.score);
+    o.target = o.target ? Number(o.target) : 85;
+    o.classAvg = o.classAvg ? Number(o.classAvg) : '';
+  }
+  if (modalType === 'transactions') {
+    o.amount = Number(o.amount);
+    if (!Number.isFinite(o.amount) || o.amount <= 0) {
+      showToast('請輸入大於 0 的金額');
+      return;
+    }
+  }
+
+  const arr = data[modalType];
+  if (editing) {
+    const i = arr.findIndex(x => x.id === editing);
+    if (i >= 0) arr[i] = { ...arr[i], ...o };
+    showToast('已更新紀錄！');
+  } else {
+    arr.push({ id: uid(), ...o });
+    showToast('已新增紀錄！');
+  }
+
+  save();
+  closeModal();
+  renderAll();
+});
+
+// 綁定頂部與各頁按鈕
+$('#addSchedule').onclick = () => openModal('schedule');
+$('#addSchool').onclick = () => openModal('school');
+$('#addGradeBtn').onclick = () => openModal('grades');
+$('#addStudyLogBtn').onclick = () => openModal('studyLogs');
+$('#editGoalsBtn').onclick = () => openModal('goals');
+$('#addTransaction').onclick = () => openModal('transactions');
+$('#quickAdd').onclick = () => openModal('hub');
+$('#editWishBtn').onclick = () => showView('settings');
+$('#pinLockSettingBtn').onclick = openPinModal;
+
+$('#lineCardBtn').onclick = openLineCardModal;
+$('#smartImportBtn').onclick = openSmartImportModal;
+$('#schoolSmartPasteBtn').onclick = openSmartImportModal;
+$('#radarSmartPasteBtn').onclick = openSmartImportModal;
+$('#schedIcsExportBtn').onclick = exportICSCalendar;
+$('#settingsIcsBtn').onclick = exportICSCalendar;
+
+$('#schoolFilter').addEventListener('change', renderSchool);
+$('#schoolSearch').addEventListener('input', renderSchool);
+$('#reportMonth').value = monthISO();
+$('#reportMonth').addEventListener('change', renderReports);
+
+// 全域點擊事件代理
+document.addEventListener('click', e => {
+  const hubBtn = e.target.closest('[data-open-modal]');
+  if (hubBtn) { openModal(hubBtn.dataset.openModal); return; }
+
+  const fillPill = e.target.closest('[data-fill-target]');
+  if (fillPill) {
+    const input = $(fillPill.dataset.fillTarget);
+    if (input) { input.value = fillPill.dataset.fillVal; input.focus(); }
+    return;
+  }
+
+  const gradeSubBtn = e.target.closest('[data-grade-sub]');
+  if (gradeSubBtn) {
+    selectedGradeSubject = gradeSubBtn.dataset.gradeSub;
+    renderGrades();
+    return;
+  }
+
+  // ⚡ 1 秒快記收支
+  const quickTxBtn = e.target.closest('[data-quick-tx]');
+  if (quickTxBtn) {
+    const preset = quickFinancePresets[Number(quickTxBtn.dataset.quickTx)];
+    if (preset) {
+      const newTx = {
+        id: uid(),
+        type: preset.type,
+        date: todayISO(),
+        category: preset.category,
+        amount: preset.amount,
+        note: preset.note
+      };
+      data.transactions.push(newTx);
+      save();
+      renderAll();
+      showToast(`⚡ 已快記：${preset.label} (${money(preset.amount)})`, '復原', () => {
+        data.transactions = data.transactions.filter(t => t.id !== newTx.id);
+        save();
+        renderAll();
+        showToast('已復原該筆快記');
+      });
+    }
+    return;
+  }
+
+  // ⚡ 1 秒快記讀書時數
+  const quickStudyBtn = e.target.closest('[data-quick-study]');
+  if (quickStudyBtn) {
+    const preset = quickStudyPresets[Number(quickStudyBtn.dataset.quickStudy)];
+    if (preset) {
+      const log = { id: uid(), date: todayISO(), subject: preset.subject, mins: preset.mins, note: preset.note };
+      data.studyLogs.push(log);
+      save();
+      renderAll();
+      showToast(`⏱ 已打卡：${preset.subject} +${preset.mins} 分鐘！`, '復原', () => {
+        data.studyLogs = data.studyLogs.filter(l => l.id !== log.id);
+        save();
+        renderAll();
+      });
+    }
+    return;
+  }
+
+  const edit = e.target.closest('[data-edit]');
+  if (edit) {
+    const [type, id] = edit.dataset.edit.split(':');
+    const item = (data[type] || []).find(x => x.id === id);
+    if (item) openModal(type, item);
+    return;
+  }
+
+  const del = e.target.closest('[data-del]');
+  if (del) {
+    const [type, id] = del.dataset.del.split(':');
+    askConfirm('刪除紀錄', '確定要刪除這筆紀錄嗎？', () => {
+      data[type] = data[type].filter(x => x.id !== id);
+      save();
+      renderAll();
+      showToast('紀錄已刪除');
+    });
+    return;
+  }
+
+  const toggle = e.target.closest('[data-toggle]');
+  if (toggle) {
+    const item = data.school.find(x => x.id === toggle.dataset.toggle);
+    if (item) {
+      item.done = !item.done;
+      save();
+      renderAll();
+      showToast(item.done ? `👏 已完成：${item.title}` : `已標記為待辦：${item.title}`);
+    }
+    return;
+  }
+
+  const toggleGoal = e.target.closest('[data-toggle-goal]');
+  if (toggleGoal) {
+    const g = data.goals.find(x => x.id === toggleGoal.dataset.toggleGoal);
+    if (g) {
+      g.done = !g.done;
+      g.progress = g.done ? 100 : 60;
+      save();
+      renderAll();
+    }
+  }
+});
+
+// 載入國高中生豐富範例資料（確保今、明、後三天都有對應課表與考試作業！）
+function loadDemoData(silent = false) {
+  const m = monthISO();
+  const wToday = getWeekdayIndex(todayISO());
+  const wTomorrow = getWeekdayIndex(daysAgoISO(-1));
+  const wAfter = getWeekdayIndex(daysAgoISO(-2));
+
+  data = {
+    sanitizedSummary: null,
+    settings: {
+      familyName: '小宇的高一計畫',
+      currency: 'TWD',
+      wishTitle: 'Sony 降噪藍牙耳機',
+      wishTarget: 2500,
+      weeklyStudyGoalHours: 10,
+      studentPin: '',
+      parentNote: '這週數學小考很穩喔！週五補習下課爸爸會開車去接你～'
+    },
+    schedule: [
+      { id: uid(), day: wToday, start: '18:30', end: '21:00', title: '高中數學頂標進度班', kind: '補習班', place: '站前文理補習班 4F', logistics: '🚗+🍱 需接送且外食' },
+      { id: uid(), day: wTomorrow, start: '18:30', end: '20:30', title: '英文核心字彙與寫作', kind: '補習班', place: '外語中心 3F', logistics: '🍱 補習前外食' },
+      { id: uid(), day: wAfter, start: '16:30', end: '18:00', title: '吉他社團發表會團練', kind: '才藝社團', place: '學校社團大樓 B1', logistics: '🏠 自行回家/在家用餐' },
+      { id: uid(), day: 4, start: '18:30', end: '21:00', title: '物理化學探究實驗班', kind: '補習班', place: '自然科學教室', logistics: '🚗 需家長接送' },
+      { id: uid(), day: 5, start: '10:00', end: '12:00', title: '電繪與插畫設計才藝課', kind: '才藝社團', place: '創藝設計學院', logistics: '🏠 自行回家/在家用餐' },
+      { id: uid(), day: 6, start: '14:00', end: '16:30', title: '週末歷屆模考題自主衝刺', kind: '自主複習', place: '市立圖書館自習室', logistics: '🏠 自行回家/在家用餐' }
+    ],
+    school: [
+      { id: uid(), type: 'task', date: todayISO(), subject: '國文', title: '古文閱讀心得學習單繳交', done: false, note: '放學前交給學藝股長' },
+      { id: uid(), type: 'exam', date: daysAgoISO(-1), subject: '數學', title: '隨堂小考：三角函數與直線方程式', done: false, note: '熟記斜率與正餘弦公式' },
+      { id: uid(), type: 'task', date: daysAgoISO(-1), subject: '自然', title: '物理探究實驗數據圖表報告', done: false, note: '與小組雲端共編簡報' },
+      { id: uid(), type: 'exam', date: daysAgoISO(-2), subject: '英文', title: '空英雜誌 Unit 4–5 單字片語抽考', done: false, note: '早自習測驗' },
+      { id: uid(), type: 'exam', date: daysAgoISO(-6), subject: '數學', title: '第二次定期段考（全範圍）', done: false, note: '目標突破 88 分' }
+    ],
+    studyLogs: [
+      { id: uid(), date: daysAgoISO(3), subject: '數學', mins: 90, note: '講義第 3 章錯題重算' },
+      { id: uid(), date: daysAgoISO(2), subject: '英文', mins: 60, note: '背誦段考核心片語與聽力' },
+      { id: uid(), date: daysAgoISO(1), subject: '自然', mins: 60, note: '整理運動學公式筆記' },
+      { id: uid(), date: todayISO(), subject: '國文', mins: 45, note: '完成古文十五篇閱讀理解' }
+    ],
+    goals: [
+      { id: uid(), title: '第二次段考數學突破 85 分', progress: 85, done: false },
+      { id: uid(), title: '每週維持自主專注讀書滿 10 小時', progress: 70, done: false },
+      { id: uid(), title: '英文空英雜誌單字本背完 Unit 1~5', progress: 100, done: true }
+    ],
+    grades: [
+      { id: uid(), examName: '開學診斷考', date: daysAgoISO(75), subject: '數學', score: 68, target: 82, classAvg: 65, note: '高一範圍適應中' },
+      { id: uid(), examName: '第一次小考', date: daysAgoISO(55), subject: '數學', score: 74, target: 82, classAvg: 70, note: '公式漸漸熟練' },
+      { id: uid(), examName: '第一次段考', date: daysAgoISO(38), subject: '數學', score: 81, target: 82, classAvg: 72, note: '計算速度快很多' },
+      { id: uid(), examName: '第二次小考', date: daysAgoISO(20), subject: '數學', score: 85, target: 82, classAvg: 74, note: '首次突破目標線！' },
+      { id: uid(), examName: '學期模擬測驗', date: daysAgoISO(6), subject: '數學', score: 89, target: 85, classAvg: 75, note: '幾何大題拿滿分' },
+
+      { id: uid(), examName: '第一次段考', date: daysAgoISO(38), subject: '英文', score: 82, target: 85, classAvg: 76, note: '克漏字有進步' },
+      { id: uid(), examName: '學期模擬測驗', date: daysAgoISO(6), subject: '英文', score: 88, target: 85, classAvg: 78, note: '閱讀測驗全對' },
+      { id: uid(), examName: '第一次段考', date: daysAgoISO(38), subject: '國文', score: 84, target: 85, classAvg: 79, note: '文言文閱讀穩定' },
+      { id: uid(), examName: '學期模擬測驗', date: daysAgoISO(6), subject: '國文', score: 86, target: 85, classAvg: 78, note: '作文拿到高分' }
+    ],
+    transactions: [
+      { id: uid(), type: 'income', date: `${m}-01`, category: '零用錢', amount: 2500, note: '本月固定零用錢' },
+      { id: uid(), type: 'expense', date: daysAgoISO(6), category: '儲蓄', amount: 800, note: '先存起來買 Sony 藍牙耳機' },
+      { id: uid(), type: 'expense', date: daysAgoISO(5), category: '餐費', amount: 360, note: '補習前晚餐與同學買雞排珍奶（私人備註）' },
+      { id: uid(), type: 'expense', date: daysAgoISO(4), category: '文具／學用品', amount: 280, note: '買數學題庫與活頁紙' },
+      { id: uid(), type: 'expense', date: daysAgoISO(3), category: '娛樂', amount: 220, note: '買喜歡的動漫周邊（不想被唸的私人消費）' },
+      { id: uid(), type: 'expense', date: daysAgoISO(2), category: '交通', amount: 180, note: '悠遊卡加值' },
+      { id: uid(), type: 'expense', date: todayISO(), category: '餐費', amount: 95, note: '學校合作社午餐與布丁' }
+    ]
+  };
+  save();
+  if (!silent) {
+    renderAll();
+    showToast('✨ 已載入範例資料！試試切換上方「🎒學生視角 / 👨‍👩‍👧家長視角」比較零用錢隱私差異！');
+  }
+}
+
+$('#demoDataBtn').onclick = () => loadDemoData(false);
+$('#settingsDemoBtn').onclick = () => loadDemoData(false);
+
+function renderAll() {
+  renderRoleHeader();
+  renderDashboard();
+  renderSchedule();
+  renderSchool();
+  renderStudy();
+  renderGrades();
+  renderFinance();
+  renderReports();
+  renderSettings();
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `家有計畫備份-${todayISO()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('已匯出 JSON 備份檔案');
+}
+
+function importData(file) {
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const obj = JSON.parse(r.result);
+      if (!obj || !Array.isArray(obj.schedule) || !Array.isArray(obj.school)) throw Error('format');
+      askConfirm('匯入備份資料', '匯入備份將會覆蓋目前的本機紀錄，確定要繼續嗎？', () => {
+        data = { ...structuredClone(defaults), ...obj };
+        save();
+        renderAll();
+        showToast('備份資料匯入完成！');
+      });
+    } catch (e) {
+      showToast('檔案格式不正確。');
+    }
+  };
+  r.readAsText(file);
+}
+
+$('#settingsExport').onclick = exportData;
+$('#settingsImport').onclick = () => $('#importFile').click();
+$('#importFile').addEventListener('change', e => {
+  if (e.target.files[0]) importData(e.target.files[0]);
+  e.target.value = '';
+});
+
+$('#saveSettings').onclick = () => {
+  data.settings.familyName = $('#familyName').value.trim() || '家有計畫';
+  data.settings.weeklyStudyGoalHours = Math.max(1, Number($('#weeklyStudyGoalInput').value) || 10);
+  data.settings.wishTitle = $('#wishTitleInput').value.trim() || '購買理想願望清單';
+  data.settings.wishTarget = Math.max(100, Number($('#wishTargetInput').value) || 2500);
+  data.settings.studentPin = $('#studentPinInput').value.trim();
+  data.settings.parentNote = $('#parentNoteInput').value.trim();
+  save();
+  renderAll();
+  showToast('✅ 隱私鎖、儲蓄願望與家庭設定已儲存！');
+};
+
+$('#clearData').onclick = () => {
+  askConfirm('清除所有紀錄', '確定要清除所有課表、考試、成績與零用錢紀錄嗎？', () => {
+    data = structuredClone(defaults);
+    save();
+    renderAll();
+    showToast('已清空所有本機紀錄');
+  });
+};
+
+renderAll();
+</script>
+</body>
+</html>
