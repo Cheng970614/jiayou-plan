@@ -31,6 +31,60 @@
   --shadow: 0 8px 26px rgba(43, 69, 51, .06);
   --radius: 18px;
 }
+/* 👨‍👩‍👧 家長視角專屬：同色系莫蘭迪藍主題（自動切換全站主色調） */
+body.parent-theme {
+  --bg: #f1f6fa;
+  --ink: #22303c;
+  --muted: #697b89;
+  --line: #dbe5ee;
+  --green: #437191;
+  --green-hover: #355b75;
+  --green2: #e5eff7;
+  --shadow: 0 8px 26px rgba(42, 74, 99, .07);
+}
+body.parent-theme .btn.soft {
+  background: #e5eff7;
+  border-color: #c5daeb;
+  color: #355b75;
+}
+body.parent-theme .btn.soft:hover {
+  background: #d7e7f4;
+}
+body.parent-theme .datebox {
+  background: #eaf2f8;
+  color: var(--green);
+}
+body.parent-theme .radar-day.today,
+body.parent-theme .day-col.is-today {
+  background: #edf5fb;
+  border-color: #b3cfe4;
+}
+body.parent-theme .wish-tree-card {
+  background: linear-gradient(145deg, #eef6fc 0%, #ffffff 55%, #f4f9fd 100%);
+  border-color: #c7dceb;
+}
+/* 接送提前提醒彈出區塊 */
+.pickup-reminder-box {
+  background: linear-gradient(135deg, #eef6fc 0%, #f7fbfe 100%);
+  border: 1px solid #bfd8ec;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-top: 6px;
+  animation: fadeIn 0.2s ease;
+}
+.pickup-reminder-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #fff4e0;
+  color: #94611a;
+  border: 1px solid #f2d49b;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 10.5px;
+  font-weight: 750;
+  margin-top: 3px;
+}
 * { box-sizing: border-box; }
 body {
   margin: 0;
@@ -1114,16 +1168,16 @@ footer { padding: 20px 0 4px; color: var(--muted); font-size: 11.5px; text-align
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span class="sync-dot" id="loginSyncDot"></span>
         <div>
-          <div style="font-size:13px;font-weight:750;color:var(--ink)" id="loginAccountStatusText">Google 家庭雲端連動（跨設備自動保存、親子即時更新）</div>
-          <div class="smallmuted" id="loginRoomCodeHint">綁定 Google 帳號或輸入相同「家庭連動碼」，家長與小孩手機即可時時同步！</div>
+          <div style="font-size:13px;font-weight:750;color:var(--ink)" id="loginAccountStatusText">Google 帳號快速登入 ＆ 家庭跨設備連動</div>
+          <div class="smallmuted" id="loginRoomCodeHint">一鍵綁定 Google 帳號即可快速登入，並與家人時時同步課表與進度！</div>
         </div>
       </div>
       <div style="display:flex;gap:7px;flex-wrap:wrap">
         <button type="button" class="google-btn" id="googleLoginBtn">
           <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-          <span id="googleBtnLabel">Google 帳戶登入 / 連動</span>
+          <span id="googleBtnLabel">Google 帳號快速登入</span>
         </button>
-        <button type="button" class="btn blue-soft" id="openRoomSyncModalBtn" style="padding:7px 12px;font-size:12px">🔗 設定家庭連動碼</button>
+        <button type="button" class="btn blue-soft" id="openRoomSyncModalBtn" style="padding:7px 12px;font-size:12px">🔗 家庭連動碼</button>
       </div>
     </div>
 
@@ -1713,17 +1767,50 @@ const periodSymptomList = [
   '✨ 身體狀態良好'
 ];
 
-// 預設週一至週五課表節次時間表（供 AI 拍照掃描課表自動對應）
-const schoolPeriodSlots = [
-  { period: 1, start: '08:10', end: '09:00' },
-  { period: 2, start: '09:10', end: '10:00' },
-  { period: 3, start: '10:10', end: '11:00' },
-  { period: 4, start: '11:10', end: '12:00' },
-  { period: 5, start: '13:15', end: '14:05' },
-  { period: 6, start: '14:15', end: '15:05' },
-  { period: 7, start: '15:15', end: '16:05' },
-  { period: 8, start: '16:15', end: '17:05' }
-];
+// 依學制決定課表節數：國小 7 節、國高中 8 節（只預先設定節數，時間由使用者自由決定是否填寫）
+function getSchoolPeriodCount(stage = data?.settings?.schoolStage) {
+  return stage === 'elementary' ? 7 : 8;
+}
+
+function getPeriodSlots(stage = data?.settings?.schoolStage) {
+  const count = getSchoolPeriodCount(stage);
+  const customTimes = data?.settings?.periodTimes || {};
+  return Array.from({ length: count }, (_, idx) => {
+    const p = idx + 1;
+    return {
+      period: p,
+      timeText: customTimes[p] || '' // 預設不強制填時間，讓使用者自由決定
+    };
+  });
+}
+
+// 格式化課表時間與節次顯示
+function formatScheduleTime(s) {
+  const hasPeriod = s.period && Number(s.period) > 0;
+  const hasStart = Boolean((s.start || '').trim());
+  const hasEnd = Boolean((s.end || '').trim());
+  const timeRange = hasStart && hasEnd ? `${s.start}–${s.end}` : (hasStart ? s.start : (hasEnd ? s.end : ''));
+  if (hasPeriod && timeRange) return `第${s.period}節 (${timeRange})`;
+  if (hasPeriod) return `第 ${s.period} 節`;
+  if (timeRange) return timeRange;
+  return '時間彈性';
+}
+
+// 計算家長接送提前提醒文字（例如：出門 10 分鐘前、20 分鐘前、半小時前）
+function formatPickupReminderText(s) {
+  const mins = Number(s.pickupRemindMins || 0);
+  if (!mins || mins <= 0) return '';
+  const label = mins === 30 ? '半小時前 (30分)' : mins === 60 ? '1小時前 (60分)' : `出門 ${mins} 分鐘前`;
+  const refTime = (s.end || s.start || '').trim();
+  if (/^\d{2}:\d{2}$/.test(refTime)) {
+    const [hh, mm] = refTime.split(':').map(Number);
+    const totalMins = (hh * 60 + mm - mins + 1440) % 1440;
+    const rH = String(Math.floor(totalMins / 60)).padStart(2, '0');
+    const rM = String(totalMins % 60).padStart(2, '0');
+    return `🔔 提前提醒：${label}（預計 ${rH}:${rM} 提醒出門接送）`;
+  }
+  return `🔔 提前提醒：${label}提醒家長接送`;
+}
 
 // 學生端 1 秒快記預設按鍵
 const quickFinancePresets = [
@@ -1765,7 +1852,8 @@ const blankDefaults = {
     weeklyStudyGoal: 10,
     studentPin: '',
     parentCheer: '',
-    googleUser: null, // { email, displayName }
+    googleUser: null, // { email, displayName, role }
+    periodTimes: {}, // 使用者自由選填的各節時間
     familyRoomCode: '',
     familyPassphrase: '',
     customGeminiKey: ''
@@ -2028,11 +2116,11 @@ function updateCloudUIStatus() {
   });
 
   if (gUser && gUser.email) {
-    $('#googleBtnLabel').textContent = `${gUser.displayName || gUser.email.split('@')[0]} (已記住身分)`;
-    $('#loginAccountStatusText').textContent = `✅ 已綁定家庭識別帳號：${gUser.email}`;
+    $('#googleBtnLabel').textContent = `以 ${gUser.displayName || gUser.email.split('@')[0]} 快速登入`;
+    $('#loginAccountStatusText').textContent = `✅ 已綁定 Google 帳號：${gUser.email}（點擊右側按鈕可 1 秒快速登入）`;
   } else {
-    $('#googleBtnLabel').textContent = '設定家庭身分 / 同步';
-    $('#loginAccountStatusText').textContent = '家庭資料保存與跨手機同步（本機自動保存 ＋ 24h 加密同步碼）';
+    $('#googleBtnLabel').textContent = 'Google 帳號快速登入';
+    $('#loginAccountStatusText').textContent = 'Google 帳號快速登入 ＆ 家庭跨設備同步（本機保存＋加密同步碼）';
   }
 
   if (realCloudActive) {
@@ -2659,6 +2747,13 @@ function daysFromToday(s) {
   if (!s) return 9999;
   return Math.round((new Date(s + 'T12:00:00') - new Date(todayISO() + 'T12:00:00')) / 86400000);
 }
+function sortScheduleItems(a, b) {
+  if (a.day !== b.day) return Number(a.day) - Number(b.day);
+  const pA = Number(a.period) || 99;
+  const pB = Number(b.period) || 99;
+  if (pA !== pB) return pA - pB;
+  return (a.start || '99:99').localeCompare(b.start || '99:99');
+}
 function isoToWeekdayIndex(isoDate) {
   const d = new Date(isoDate + 'T12:00:00');
   const day = d.getDay();
@@ -2712,7 +2807,7 @@ function renderThreeDayRadar() {
     const wIdx = isoToWeekdayIndex(iso);
     const daySched = [...data.schedule]
       .filter(s => Number(s.day) === wIdx)
-      .sort((a, b) => a.start.localeCompare(b.start));
+      .sort(sortScheduleItems);
     const daySchool = schoolRows().filter(x => x.date === iso);
 
     const items = [];
@@ -2734,12 +2829,15 @@ function renderThreeDayRadar() {
     });
     daySched.forEach(s => {
       const tagClass = s.kind === '補習班' ? 'red' : s.kind === '才藝社團' ? 'purple' : 'blue';
+      const timeLabel = formatScheduleTime(s);
+      const remindText = formatPickupReminderText(s);
       items.push(`
         <div class="radar-item">
-          <span class="tag ${tagClass}">${esc(s.start)}</span>
+          <span class="tag ${tagClass}">${esc(timeLabel)}</span>
           <div style="flex:1;min-width:0">
             <div style="font-weight:700">${esc(s.title)} <span class="smallmuted">(${esc(s.kind)})</span></div>
             <div class="smallmuted">${esc(s.place || '')}${s.pickup ? ` · <strong>${esc(s.pickup)}</strong>` : ''}</div>
+            ${remindText ? `<div class="pickup-reminder-badge">${esc(remindText)}</div>` : ''}
           </div>
         </div>
       `);
@@ -2796,6 +2894,9 @@ function renderDashboard() {
   const sName = data.settings.familyName?.trim() || '未命名同學';
   const pName = data.settings.parentTitle?.trim() || '家長';
   const isParent = currentRole === 'parent';
+  // 動態切換全站色彩主題：學生視角為鼠尾草綠，家長視角為同色系莫蘭迪藍
+  document.body.classList.toggle('parent-theme', isParent);
+
   const gradeBadge = getStageGradeText(data.settings.schoolStage, data.settings.gradeLevel);
   $('#headerFamilyBadge').textContent = `${sName} ＆ ${pName}`;
   $('#headerGradeBadge').textContent = `${data.settings.gender === 'female' ? '👧' : '👦'} ${gradeBadge}`;
@@ -2891,25 +2992,29 @@ function renderDashboard() {
   // 左側主面板
   if (currentRole === 'parent') {
     const pickupList = [...data.schedule]
-      .filter(s => s.kind !== '學校課程' || s.pickup)
-      .sort((a, b) => a.day - b.day || a.start.localeCompare(b.start));
+      .filter(s => s.kind !== '學校課程' || s.pickup || Number(s.pickupRemindMins) > 0)
+      .sort(sortScheduleItems);
 
     $('#dashLeftPrimaryPanel').innerHTML = `
       <div class="panelhead">
-        <h3><span>🚗</span> 本週補習、才藝與接送／供餐一覽</h3>
+        <h3><span>🚗</span> 本週補習、才藝與接送提醒一覽</h3>
         <button class="linkbtn" data-goto="schedule">完整週課表 →</button>
       </div>
       <div class="list">
-        ${pickupList.length ? pickupList.map(s => `
+        ${pickupList.length ? pickupList.map(s => {
+          const remindText = formatPickupReminderText(s);
+          return `
           <div class="listitem">
             <span class="tag ${s.kind === '補習班' ? 'gold' : s.kind === '才藝社團' ? 'purple' : 'blue'}">${weekdays[s.day]}</span>
             <div class="itemmain">
-              <div class="itemtitle">${esc(s.title)} <span class="smallmuted">(${esc(s.start)}–${esc(s.end)})</span></div>
+              <div class="itemtitle">${esc(s.title)} <span class="smallmuted">(${esc(formatScheduleTime(s))})</span></div>
               <div class="itemmeta">📍 ${esc(s.place || '未填地點')}</div>
+              ${remindText ? `<div class="pickup-reminder-badge">${esc(remindText)}</div>` : ''}
             </div>
             <span class="tag green">${esc(s.pickup || '自行往返')}</span>
           </div>
-        `).join('') : empty('尚未新增補習或才藝課表。')}
+        `;
+        }).join('') : empty('尚未新增補習或才藝課表。')}
       </div>
     `;
   } else {
@@ -3013,17 +3118,19 @@ function renderDashboard() {
 // ==================== 2. 渲染整週課表與補習規劃 ====================
 function renderSchedule() {
   const isParent = currentRole === 'parent';
+  const pCount = getSchoolPeriodCount();
+  const stageLabel = data.settings.schoolStage === 'elementary' ? '國小 7 節制' : '國高中 8 節制';
   if ($('#schedStudentBtns')) $('#schedStudentBtns').style.display = 'inline-flex';
   if ($('#addSchedule')) {
     $('#addSchedule').style.display = 'inline-flex';
     $('#addSchedule').textContent = isParent ? '＋ 家長新增補習／接送' : '＋ 新增時段';
   }
-  if ($('#schedPageTitle')) $('#schedPageTitle').textContent = isParent ? '孩子的整週課表、補習與接送安排' : '整週課表、補習班與才藝規劃';
+  if ($('#schedPageTitle')) $('#schedPageTitle').textContent = isParent ? `孩子的整週課表與接送安排（${stageLabel}）` : `整週課表、補習班與才藝規劃（${stageLabel}）`;
   if ($('#schedPageDesc')) $('#schedPageDesc').textContent = isParent
-    ? '家長可查看孩子整週課表與接送時間，也可直接點擊右上角幫孩子新增補習班、才藝課或用照片對照快填課表。'
-    : '支援新學期一鍵重置課表、📸 課表照片對照印章快填，以及匯出手機行事曆。';
+    ? `目前為${stageLabel}（僅預設顯示第 1～${pCount} 節，時間可自由決定是否填寫）；若需家長接送可設定出門前 10/20/30 分鐘提醒！`
+    : `目前為${stageLabel}（僅預設顯示第 1～${pCount} 節，各校時間不同可自由選填），並支援設定家長接送提前提醒。`;
 
-  const rows = [...data.schedule].sort((a, b) => a.day - b.day || a.start.localeCompare(b.start));
+  const rows = [...data.schedule].sort(sortScheduleItems);
   const todayWIdx = isoToWeekdayIndex(todayISO());
 
   if (scheduleViewMode === 'grid') {
@@ -3034,12 +3141,14 @@ function renderSchedule() {
           <div class="day-col-head">${wName} ${dIdx === todayWIdx ? '<span class="tag green" style="font-size:10px;padding:1px 5px">今天</span>' : ''}</div>
           ${dayItems.length ? dayItems.map(x => {
             const cls = x.kind === '補習班' ? 'cram' : x.kind === '才藝社團' ? 'talent' : x.kind === '自主複習' ? 'self' : '';
+            const remindText = formatPickupReminderText(x);
             return `
               <div class="sched-card ${cls}">
-                <div class="sched-time">${esc(x.start)}–${esc(x.end)} · ${esc(x.kind)}</div>
+                <div class="sched-time">${esc(formatScheduleTime(x))} · ${esc(x.kind)}</div>
                 <div class="sched-title">${esc(x.title)}</div>
                 ${x.place ? `<div class="smallmuted">📍 ${esc(x.place)}</div>` : ''}
                 ${x.pickup ? `<div class="sched-pickup">🚗 ${esc(x.pickup)}</div>` : ''}
+                ${remindText ? `<div class="pickup-reminder-badge">${esc(remindText)}</div>` : ''}
                 <div class="rowactions" style="margin-top:6px">
                   <button class="mini" data-edit="schedule:${x.id}" style="padding:2px 6px;font-size:10.5px">編輯</button>
                   <button class="mini del" data-del="schedule:${x.id}" style="padding:2px 6px;font-size:10.5px">刪除</button>
@@ -3055,26 +3164,32 @@ function renderSchedule() {
     $('#scheduleContainer').innerHTML = rows.length ? `
       <div class="tablewrap">
         <table>
-          <thead><tr><th>星期</th><th>時間</th><th>類別</th><th>課程／活動名稱</th><th>地點</th><th>接送與晚餐安排</th><th>操作</th></tr></thead>
+          <thead><tr><th>星期</th><th>節次／時間（選填）</th><th>類別</th><th>課程／活動名稱</th><th>地點</th><th>接送與提前提醒</th><th>操作</th></tr></thead>
           <tbody>
-            ${rows.map(x => `<tr>
+            ${rows.map(x => {
+              const remindText = formatPickupReminderText(x);
+              return `<tr>
               <td><span class="tag green">${weekdays[x.day]}</span></td>
-              <td><strong>${esc(x.start)}–${esc(x.end)}</strong></td>
+              <td><strong>${esc(formatScheduleTime(x))}</strong></td>
               <td>${esc(x.kind || '課程')}</td>
               <td><strong>${esc(x.title)}</strong></td>
               <td>${esc(x.place || '—')}</td>
-              <td><span class="tag blue">${esc(x.pickup || '自行往返')}</span></td>
+              <td>
+                <span class="tag blue">${esc(x.pickup || '自行往返')}</span>
+                ${remindText ? `<div class="pickup-reminder-badge">${esc(remindText)}</div>` : ''}
+              </td>
               <td>
                 <div class="rowactions">
                   <button class="mini" data-edit="schedule:${x.id}">編輯</button>
                   <button class="mini del" data-del="schedule:${x.id}">刪除</button>
                 </div>
               </td>
-            </tr>`).join('')}
+            </tr>`;
+            }).join('')}
           </tbody>
         </table>
       </div>
-    ` : empty('尚未建立固定週課表，點擊右上「＋ 新增」開始規劃。');
+    ` : empty('尚未建立固定週課表，點擊右上「＋ 新增」或「📸 拍照／傳圖掃描新課表」開始規劃。');
   }
 }
 
@@ -3575,16 +3690,23 @@ $('#settingsSchoolStage').addEventListener('change', (e) => {
 const timetableStampSubjects = ['國文', '英文', '數學', '自然', '社會', '體育', '音樂', '美術', '資訊', '社團', '班會', '自習', '🧹 清除空格'];
 
 function createDefaultScanMatrix() {
-  // 5天 (週一~週五) x 7節預設常見科目矩陣
-  return [
-    ['國文', '數學', '英文', '自然', '社會'],
-    ['數學', '英文', '國文', '數學', '自然'],
-    ['英文', '國文', '數學', '英文', '國文'],
-    ['自然', '社會', '自然', '國文', '數學'],
-    ['社會', '自然', '體育', '美術', '英文'],
-    ['音樂', '資訊', '家政', '體育', '班會'],
-    ['輔導', '社團', '自習', '輔導', '社團']
-  ];
+  // 根據目前學制自動設定節數：國小 7 節、國高中 8 節，並讀取目前已排入的學校課表（不強行塞入固定死的時間與假科目）
+  const pCount = getSchoolPeriodCount();
+  const matrix = Array.from({ length: pCount }, () => ['', '', '', '', '']);
+  data.schedule
+    .filter(s => s.kind === '學校課程' && s.day >= 0 && s.day <= 4)
+    .forEach(s => {
+      let pIdx = (Number(s.period) || 0) - 1;
+      if (pIdx < 0) {
+        const m = String(s.title || '').match(/第(\d+)節[：:]?(.*)/);
+        if (m) pIdx = Number(m[1]) - 1;
+      }
+      if (pIdx >= 0 && pIdx < pCount) {
+        const cleanSub = String(s.title || '').replace(/^第\d+節[：:\s]*/, '').trim();
+        matrix[pIdx][Number(s.day)] = cleanSub;
+      }
+    });
+  return matrix;
 }
 
 async function analyzeTimetableImageWithGemini(base64Data, mimeType) {
@@ -3629,12 +3751,15 @@ async function analyzeTimetableImageWithGemini(base64Data, mimeType) {
 }
 
 function renderScannedMatrixTableHTML(matrix) {
+  const pCount = getSchoolPeriodCount();
+  const slots = getPeriodSlots();
+  const normalizedMatrix = Array.from({ length: pCount }, (_, idx) => matrix[idx] || ['', '', '', '', '']);
   return `
     <div class="tablewrap" style="margin-top:8px">
-      <table class="scan-grid-table" style="min-width:500px">
+      <table class="scan-grid-table" style="min-width:540px">
         <thead>
           <tr>
-            <th style="width:86px">節次 / 時間</th>
+            <th style="width:125px">節次（共 ${pCount} 節）<br><span style="font-weight:400;font-size:10.5px">時間可留空或自由填寫</span></th>
             <th>星期一</th>
             <th>星期二</th>
             <th>星期三</th>
@@ -3643,16 +3768,17 @@ function renderScannedMatrixTableHTML(matrix) {
           </tr>
         </thead>
         <tbody>
-          ${matrix.map((row, pIdx) => {
-            const slot = schoolPeriodSlots[pIdx] || { period: pIdx + 1, start: '16:15', end: '17:05' };
+          ${normalizedMatrix.map((row, pIdx) => {
+            const slot = slots[pIdx] || { period: pIdx + 1, timeText: '' };
             return `
               <tr>
-                <td style="text-align:center;font-size:11px;font-weight:700;color:var(--muted)">
-                  第 ${slot.period} 節<br><span>${slot.start}-${slot.end}</span>
+                <td style="text-align:center;font-size:12px;font-weight:800;color:var(--green)">
+                  第 ${slot.period} 節
+                  <input type="text" data-period-time="${slot.period}" value="${esc(slot.timeText)}" placeholder="時間選填 (例 08:10)" style="margin-top:3px;font-size:10.5px;padding:3px 5px;font-weight:400;color:var(--muted)">
                 </td>
                 ${[0, 1, 2, 3, 4].map(dIdx => `
                   <td>
-                    <input type="text" class="stamp-ready" data-scan-cell="${pIdx}-${dIdx}" value="${esc(row[dIdx] || '')}" placeholder="點此套用印章">
+                    <input type="text" class="stamp-ready" data-scan-cell="${pIdx}-${dIdx}" value="${esc(row[dIdx] || '')}" placeholder="點此蓋印章">
                   </td>
                 `).join('')}
               </tr>
@@ -3983,14 +4109,14 @@ function fieldsFor(type, item = {}) {
   }
 
   if (type === 'PhotoScanTimetable') {
-    if (!scannedTimetableMatrix) {
-      scannedTimetableMatrix = createDefaultScanMatrix();
-    }
+    scannedTimetableMatrix = createDefaultScanMatrix();
+    const pCount = getSchoolPeriodCount();
+    const stageName = data.settings.schoolStage === 'elementary' ? '國小（預設 7 節）' : '國高中（預設 8 節）';
     return `
       <div style="display:flex;flex-direction:column;gap:12px">
         <div class="ocr-dropzone" id="triggerPhotoUploadBox" style="padding:14px">
           <div style="font-weight:800;font-size:14px;color:var(--green)">📸 第一步：點此拍下或上傳「紙本課表照片」置頂對照</div>
-          <div class="smallmuted">照片會顯示在正上方，您可直接看著照片用下方「🎨 科目印章」1 秒點選填表（免金鑰、最穩定）！</div>
+          <div class="smallmuted">目前學制為 <strong>${stageName}</strong>：只預先列出第 1～${pCount} 節，各校上下課時間不同可自由決定要不要填寫！</div>
           <div id="ocrPreviewBox"></div>
         </div>
 
@@ -4028,6 +4154,47 @@ function fieldsFor(type, item = {}) {
         <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">
           <button type="button" class="btn" onclick="closeModal()">取消</button>
           <button type="button" class="btn primary" id="applyScannedTimetableBtn">✅ 一鍵儲存週一至週五課表</button>
+        </div>
+      </div>
+    `;
+  }
+
+  if (type === 'GoogleQuickLoginModal') {
+    const gUser = data.settings.googleUser;
+    const gEmail = gUser?.email || '';
+    const gName = gUser?.displayName || data.settings.familyName || '';
+    return `
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:12px;background:#f4f8fd;border:1px solid #cde0f5;border-radius:16px;padding:14px">
+          <div style="width:44px;height:44px;border-radius:12px;background:#fff;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+            <svg width="24" height="24" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          </div>
+          <div style="flex:1">
+            <div style="font-weight:800;font-size:15px;color:var(--ink)">Google 帳號一鍵快速登入</div>
+            <div class="smallmuted">綁定 Google 帳號後，下次點一下即可直接進入學生或家長空間！</div>
+          </div>
+          <button type="button" class="google-btn" id="modalGooglePopupBtn" style="white-space:nowrap">G 彈窗授權</button>
+        </div>
+
+        <div class="formgrid">
+          <div class="field">
+            <label>📧 Google 信箱帳號 (Gmail)</label>
+            <input type="email" id="quickGoogleEmailInput" value="${esc(gEmail)}" placeholder="例如：yourname@gmail.com">
+          </div>
+          <div class="field">
+            <label>👤 顯示名稱／暱稱</label>
+            <input type="text" id="quickGoogleNameInput" value="${esc(gName)}" placeholder="例如：小安 或 陳媽媽">
+          </div>
+        </div>
+
+        <div style="font-size:12.5px;font-weight:750;color:var(--muted)">👇 點擊下方按鈕，立即以 Google 帳號快速登入並進入系統：</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <button type="button" class="btn primary" id="quickGoogleEnterStudentBtn" style="justify-content:center;padding:12px">
+            🎒 以學生身分快速登入
+          </button>
+          <button type="button" class="btn blue-soft" id="quickGoogleEnterParentBtn" style="justify-content:center;padding:12px;border-color:#437191;background:#437191;color:#fff">
+            👨‍👩‍👧 以家長身分快速登入
+          </button>
         </div>
       </div>
     `;
@@ -4173,6 +4340,10 @@ function fieldsFor(type, item = {}) {
   }
 
   if (type === 'schedule') {
+    const pCount = getSchoolPeriodCount();
+    const currentPickup = item.pickup ?? '';
+    const needsPickup = currentPickup.includes('接送') || Number(item.pickupRemindMins) > 0;
+    const remindMins = Number(item.pickupRemindMins ?? (needsPickup ? 20 : 0));
     return `
       <div class="formgrid">
         <div class="field">
@@ -4182,23 +4353,56 @@ function fieldsFor(type, item = {}) {
         <div class="field">
           <label>類別 *</label>
           <select name="kind">
+            <option ${item.kind === '學校課程' ? 'selected' : ''}>學校課程</option>
             <option ${item.kind === '補習班' ? 'selected' : ''}>補習班</option>
             <option ${item.kind === '才藝社團' ? 'selected' : ''}>才藝社團</option>
-            <option ${item.kind === '學校課程' ? 'selected' : ''}>學校課程</option>
             <option ${item.kind === '自主複習' ? 'selected' : ''}>自主複習</option>
           </select>
         </div>
-        <div class="field"><label>開始時間 *</label><input type="time" name="start" value="${v('start', '18:30')}" required></div>
-        <div class="field"><label>結束時間 *</label><input type="time" name="end" value="${v('end', '21:00')}" required></div>
-        <div class="field full"><label>課程／活動名稱 *</label><input name="title" value="${v('title')}" required placeholder="例如：高一數學進度班、鋼琴課"></div>
-        <div class="field"><label>上課地點</label><input name="place" value="${v('place')}" placeholder="例如：站前文理補習班 3F"></div>
+        <div class="field full">
+          <label>節次（${data.settings.schoolStage === 'elementary' ? '國小預設 7 節' : '國高中預設 8 節'}，補習或課後可選「不指定節次」）</label>
+          <select name="period" id="schedPeriodSelect">
+            <option value="">不指定節次（課後補習／才藝／自訂時段）</option>
+            ${Array.from({ length: pCount }, (_, i) => i + 1).map(p => `<option value="${p}" ${Number(item.period) === p ? 'selected' : ''}>第 ${p} 節</option>`).join('')}
+          </select>
+        </div>
+        <div class="field">
+          <label>開始時間（選填，可留空）</label>
+          <input type="time" name="start" value="${v('start', '')}">
+        </div>
+        <div class="field">
+          <label>結束時間（選填，可留空）</label>
+          <input type="time" name="end" value="${v('end', '')}">
+        </div>
+        <div class="field full"><label>課程／活動名稱 *</label><input name="title" value="${v('title')}" required placeholder="例如：數學、英文補習班、鋼琴課"></div>
+        <div class="field"><label>上課地點（選填）</label><input name="place" value="${v('place')}" placeholder="例如：學校教室、站前補習班 3F"></div>
         <div class="field">
           <label>🚗 家長接送與晚餐狀態</label>
-          <input name="pickup" id="schedPickupInput" value="${v('pickup', '21:00 需家長接送')}" placeholder="點下方快速選擇">
+          <input name="pickup" id="schedPickupInput" value="${v('pickup', '')}" placeholder="點下方快速選擇（選「需家長接送」可設提前提醒）">
         </div>
         <div class="field full">
-          <div class="pill-bar">
-            ${['需家長接送', '補習前外食', '回家吃晚餐', '自行搭車返家'].map(p => `<button type="button" class="pill-btn" data-fill-target="#schedPickupInput" data-fill-val="${p}">${p}</button>`).join('')}
+          <div class="pill-bar" id="schedPickupPills">
+            ${['需家長接送', '補習前外食 · 需家長接送', '回家吃晚餐', '自行搭車返家'].map(p => `<button type="button" class="pill-btn" data-pickup-choice="${p}">${p}</button>`).join('')}
+          </div>
+        </div>
+        <!-- 當需要家長接送時，自動跳出「提前多少時間提醒家長接送」設定 -->
+        <div class="field full" id="pickupReminderBox" style="display:${needsPickup ? 'block' : 'none'}">
+          <div class="pickup-reminder-box">
+            <label style="color:var(--green);font-size:13px;margin-bottom:6px">⏰ 要在多少時間之前提醒家長出門接送小孩？</label>
+            <input type="hidden" name="pickupRemindMins" id="pickupRemindMinsInput" value="${remindMins}">
+            <div class="pill-bar" id="pickupRemindPills">
+              ${[
+                { min: 10, text: '🔔 出門 10 分鐘前' },
+                { min: 20, text: '🔔 出門 20 分鐘前' },
+                { min: 30, text: '🔔 半小時前 (30分)' },
+                { min: 45, text: '🔔 45 分鐘前' },
+                { min: 60, text: '🔔 1 小時前' },
+                { min: 0, text: '不需提前提醒' }
+              ].map(opt => `
+                <button type="button" class="pill-btn ${remindMins === opt.min ? 'active' : ''}" data-remind-min="${opt.min}">${opt.text}</button>
+              `).join('')}
+            </div>
+            <div class="smallmuted" style="margin-top:6px">💡 設定後將在「三天行程雷達」與「家長總覽看板」醒目標示提前出門提醒！</div>
           </div>
         </div>
       </div>
@@ -4326,6 +4530,7 @@ function openModal(type, item = null) {
   const titles = {
     hub: '選擇要新增或執行的功能',
     PhotoScanTimetable: '📸 拍照／傳圖 AI 智慧掃描週一至週五課表',
+    GoogleQuickLoginModal: 'G Google 帳號快速登入',
     CloudRoomModal: '☁️ Google 帳戶綁定 ＆ 家庭雲端即時連動',
     WishSetup: '🌱 設定儲蓄願望小樹目標',
     SmartImport: '📥 免打字智慧匯入 ＆ 行事曆整合',
@@ -4339,7 +4544,7 @@ function openModal(type, item = null) {
   };
   $('#modalTitle').textContent = titles[type] || '新增紀錄';
   $('#modalFields').innerHTML = fieldsFor(type, item || {});
-  const hideFooter = ['hub', 'PhotoScanTimetable', 'CloudRoomModal', 'SmartImport', 'SyncCard', 'ImportSyncCode'].includes(type);
+  const hideFooter = ['hub', 'PhotoScanTimetable', 'GoogleQuickLoginModal', 'CloudRoomModal', 'SmartImport', 'SyncCard', 'ImportSyncCode'].includes(type);
   $('#modalFooterActions').style.display = hideFooter ? 'none' : 'flex';
   $('#modalBack').classList.add('open');
 }
@@ -4371,7 +4576,11 @@ $('#modalForm').addEventListener('submit', e => {
     return;
   }
 
-  if (modalType === 'schedule') o.day = Number(o.day);
+  if (modalType === 'schedule') {
+    o.day = Number(o.day);
+    o.period = o.period ? Number(o.period) : '';
+    o.pickupRemindMins = (o.pickup && o.pickup.includes('接送')) ? Number(o.pickupRemindMins || 0) : Number(o.pickupRemindMins || 0);
+  }
   if (modalType === 'school') o.done = o.done === 'true';
   if (modalType === 'studyLogs') o.minutes = Number(o.minutes) || 30;
   if (modalType === 'grades') {
@@ -4407,11 +4616,14 @@ $('#schedExportIcsBtn').onclick = exportICSFile;
 $('#scanTimetableBtn').onclick = () => openModal('PhotoScanTimetable');
 $('#newSemesterResetBtn').onclick = openNewSemesterResetModal;
 
-// Google 與雲端連動按鈕
-$('#googleLoginBtn').onclick = () => openModal('CloudRoomModal');
+// Google 快速登入與雲端連動按鈕
+$('#googleLoginBtn').onclick = () => {
+  // 若已綁定 Google 帳號且在登入頁，可直接彈出快速登入選擇或一鍵進入
+  openModal('GoogleQuickLoginModal');
+};
 $('#openRoomSyncModalBtn').onclick = () => openModal('CloudRoomModal');
 $('#headerCloudBtn').onclick = () => openModal('CloudRoomModal');
-$('#settingsGoogleLoginBtn').onclick = () => openModal('CloudRoomModal');
+$('#settingsGoogleLoginBtn').onclick = () => openModal('GoogleQuickLoginModal');
 
 $('#genRoomCodeBtn').onclick = () => {
   const code = 'FAMILY-' + Math.floor(1000 + Math.random() * 9000);
@@ -4458,6 +4670,55 @@ document.addEventListener('click', e => {
     return;
   }
 
+  // 🚗 課表接送選項點擊：若包含「接送」，自動彈出「提前多少時間提醒家長」設定框
+  const pickupChoiceBtn = e.target.closest('[data-pickup-choice]');
+  if (pickupChoiceBtn) {
+    const val = pickupChoiceBtn.dataset.pickupChoice;
+    const inp = $('#schedPickupInput');
+    if (inp) inp.value = val;
+    const remBox = $('#pickupReminderBox');
+    const remInp = $('#pickupRemindMinsInput');
+    if (val.includes('接送')) {
+      if (remBox) remBox.style.display = 'block';
+      if (remInp && Number(remInp.value) === 0) {
+        remInp.value = 20;
+        $$('[data-remind-min]').forEach(b => b.classList.toggle('active', Number(b.dataset.remindMin) === 20));
+      }
+    } else {
+      if (remBox) remBox.style.display = 'none';
+      if (remInp) remInp.value = 0;
+    }
+    return;
+  }
+
+  // ⏰ 選擇提前多少時間（10分、20分、半小時前）提醒家長接送
+  const remindMinBtn = e.target.closest('[data-remind-min]');
+  if (remindMinBtn) {
+    const mins = Number(remindMinBtn.dataset.remindMin);
+    const remInp = $('#pickupRemindMinsInput');
+    if (remInp) remInp.value = mins;
+    $$('[data-remind-min]').forEach(b => b.classList.toggle('active', Number(b.dataset.remindMin) === mins));
+    return;
+  }
+
+  // G Google 帳號一鍵快速登入按鈕
+  if (e.target.id === 'quickGoogleEnterStudentBtn' || e.target.id === 'quickGoogleEnterParentBtn') {
+    const targetRole = e.target.id === 'quickGoogleEnterParentBtn' ? 'parent' : 'student';
+    const emailVal = ($('#quickGoogleEmailInput')?.value || '').trim() || 'family.user@gmail.com';
+    const nameVal = ($('#quickGoogleNameInput')?.value || '').trim() || emailVal.split('@')[0];
+    data.settings.googleUser = { email: emailVal, displayName: nameVal };
+    if (targetRole === 'student' && !data.settings.familyName) data.settings.familyName = nameVal;
+    if (targetRole === 'parent' && !data.settings.parentTitle) data.settings.parentTitle = nameVal;
+    if (!data.settings.familyRoomCode) {
+      data.settings.familyRoomCode = 'FAM-' + emailVal.split('@')[0].toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    }
+    save();
+    closeModal();
+    syncLoginScreenUI();
+    enterAppWithRole(targetRole);
+    return;
+  }
+
   // 🎨 課表印章快點選取與點擊格子自動蓋章
   const stampBtn = e.target.closest('[data-stamp-sub]');
   if (stampBtn) {
@@ -4490,7 +4751,14 @@ document.addEventListener('click', e => {
     return;
   }
   if (e.target.id === 'applyScannedTimetableBtn') {
-    // 讀取預覽表格中的所有科目並建立週一至週五課表
+    // 儲存使用者選填的各節時間（若留空則不強制帶入時間）
+    if (!data.settings.periodTimes) data.settings.periodTimes = {};
+    $$('[data-period-time]').forEach(tInp => {
+      const p = Number(tInp.dataset.periodTime);
+      data.settings.periodTimes[p] = tInp.value.trim();
+    });
+
+    // 讀取預覽表格中的所有科目並建立週一至週五課表（只預設顯示節數，時間選填）
     const replaceOld = $('#replaceOldSchoolSchedChk')?.checked;
     if (replaceOld) {
       data.schedule = data.schedule.filter(s => s.kind !== '學校課程');
@@ -4500,23 +4768,34 @@ document.addEventListener('click', e => {
       const val = inp.value.trim();
       if (!val) return;
       const [pIdx, dIdx] = inp.dataset.scanCell.split('-').map(Number);
-      const slot = schoolPeriodSlots[pIdx] || { period: pIdx + 1, start: '16:15', end: '17:05' };
+      const periodNum = pIdx + 1;
+      const customTime = (data.settings.periodTimes[periodNum] || '').trim();
+      let start = '', end = '';
+      if (customTime.includes('-') || customTime.includes('~') || customTime.includes('–')) {
+        const parts = customTime.split(/[-~–]/).map(s => s.trim());
+        start = parts[0] || '';
+        end = parts[1] || '';
+      } else {
+        start = customTime;
+      }
       data.schedule.push({
         id: uid(),
         day: dIdx,
-        start: slot.start,
-        end: slot.end,
-        title: `第${slot.period}節：${val}`,
+        period: periodNum,
+        start,
+        end,
+        title: val,
         kind: '學校課程',
         place: '學校教室',
-        pickup: ''
+        pickup: '',
+        pickupRemindMins: 0
       });
       addedCount++;
     });
     save();
     closeModal();
     showView('schedule');
-    showToast(`🎉 已自動填入週一至週五共 ${addedCount} 節學校課表！`);
+    showToast(`🎉 已儲存週一至週五共 ${addedCount} 節課表！`);
     return;
   }
 
@@ -4942,6 +5221,17 @@ $('#importFile').addEventListener('change', e => {
 $('#icsFile').addEventListener('change', e => {
   if (e.target.files[0]) importICSFile(e.target.files[0]);
   e.target.value = '';
+});
+
+// 當使用者在手動新增課表時輸入「接送」字眼，即時彈出提前提醒設定框
+document.addEventListener('input', e => {
+  if (e.target.id === 'schedPickupInput') {
+    const val = e.target.value.trim();
+    const remBox = $('#pickupReminderBox');
+    if (remBox) {
+      remBox.style.display = val.includes('接送') ? 'block' : 'none';
+    }
+  }
 });
 
 // 處理拍照／上傳課表圖片 AI 辨識
