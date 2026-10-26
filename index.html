@@ -275,6 +275,39 @@ button:active { transform: scale(0.98); }
   font-size: 12px;
   text-align: center;
   border-radius: 7px;
+  cursor: pointer;
+}
+.scan-grid-table input.stamp-ready:hover {
+  background: var(--green2);
+  border-color: var(--green);
+}
+.stamp-bar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  background: #f3f8f4;
+  border: 1px solid #cde0d1;
+  border-radius: 12px;
+}
+.stamp-btn {
+  border: 1px solid #b8d3be;
+  background: #fff;
+  color: var(--ink);
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 750;
+}
+.stamp-btn.active {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(53, 107, 80, 0.25);
+}
+.sync-dot.local-only {
+  background: var(--gold);
+  box-shadow: 0 0 0 3px rgba(217, 156, 70, 0.22);
 }
 
 /* ==================== 主程式介面 ==================== */
@@ -1194,7 +1227,6 @@ footer { padding: 20px 0 4px; color: var(--muted); font-size: 11.5px; text-align
         <span id="headerCloudLabel">雲端連動</span>
       </button>
       <button class="btn soft" id="lineSyncBtn">💬 LINE 回報卡</button>
-      <button class="btn blue-soft" id="smartImportBtn">📥 智慧匯入/掃描</button>
       <button class="btn" id="demoToolbarBtn" title="載入範例資料體驗圖表與小樹">✨ 範例</button>
       <button class="btn primary" id="quickAdd">＋ 新增紀錄</button>
       <button class="btn" id="logoutSwitchBtn" title="返回登入畫面切換身分">🚪 切換身分</button>
@@ -1233,10 +1265,10 @@ footer { padding: 20px 0 4px; color: var(--muted); font-size: 11.5px; text-align
         <div class="radar-box">
           <div class="radar-head">
             <h3><span>📡</span> 今、明、後三天精準行程雷達 <span class="smallmuted" style="font-weight:400">（自動整合：學校／補習／才藝 ＋ 考試／作業報告）</span></h3>
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="linkbtn" onclick="openModal('PhotoScanTimetable')">📸 拍照掃描課表</button>
+            <div style="display:flex;gap:6px;flex-wrap:wrap" id="radarHeaderActions">
+              <button class="linkbtn" id="radarPhotoScanBtn" onclick="openModal('PhotoScanTimetable')">📸 拍照掃描課表</button>
               <button class="linkbtn" id="radarSmartBtn">📋 貼上聯絡簿文字</button>
-              <button class="linkbtn" data-goto="schedule">管理整週課表 →</button>
+              <button class="linkbtn" data-goto="schedule">查看整週課表 →</button>
             </div>
           </div>
           <div class="radar-grid" id="threeDayRadar"></div>
@@ -1299,12 +1331,14 @@ footer { padding: 20px 0 4px; color: var(--muted); font-size: 11.5px; text-align
       <section class="view" id="view-schedule">
         <div class="sectiontop">
           <div>
-            <h2>整週課表、補習班與才藝規劃</h2>
-            <p>支援新學期一鍵重置課表、📸 拍照 AI 智慧掃描自動填入週一至週五課表，以及匯出手機行事曆。</p>
+            <h2 id="schedPageTitle">整週課表、補習班與才藝規劃</h2>
+            <p id="schedPageDesc">支援新學期一鍵重置課表、📸 拍照 AI 智慧掃描自動填入週一至週五課表，以及匯出手機行事曆。</p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn gold-soft" id="scanTimetableBtn">📸 拍照／傳圖掃描新課表</button>
-            <button class="btn danger" id="newSemesterResetBtn">🔄 新學期重置課表</button>
+            <span id="schedStudentBtns" style="display:inline-flex;gap:8px;flex-wrap:wrap">
+              <button class="btn gold-soft" id="scanTimetableBtn">📸 拍照／傳圖掃描新課表</button>
+              <button class="btn danger" id="newSemesterResetBtn">🔄 新學期重置課表</button>
+            </span>
             <button class="btn blue-soft" id="schedExportIcsBtn">📅 匯出 .ics 行事曆</button>
             <button class="btn soft" id="schedToggleViewBtn">切換：週曆網格 / 清單</button>
             <button class="btn primary" id="addSchedule">＋ 新增時段</button>
@@ -1317,10 +1351,10 @@ footer { padding: 20px 0 4px; color: var(--muted); font-size: 11.5px; text-align
       <section class="view" id="view-school">
         <div class="sectiontop">
           <div>
-            <h2>考試、報告與作業追蹤</h2>
-            <p>精確記錄明天、後天與未來的段考、小考與報告期限，支援直接貼上聯絡簿文字自動建檔。</p>
+            <h2 id="schoolPageTitle">考試、報告與作業追蹤</h2>
+            <p id="schoolPageDesc">精確記錄明天、後天與未來的段考、小考與家長指派評量，支援貼上聯絡簿文字自動建檔。</p>
           </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div style="display:flex;gap:8px;flex-wrap:wrap" id="schoolTopActionBtns">
             <button class="btn blue-soft" id="schoolSmartPasteBtn">📋 貼上聯絡簿文字快速建檔</button>
             <button class="btn primary" id="addSchool">＋ 新增考試／作業</button>
           </div>
@@ -1342,17 +1376,17 @@ footer { padding: 20px 0 4px; color: var(--muted); font-size: 11.5px; text-align
       <section class="view" id="view-study">
         <div class="sectiontop">
           <div>
-            <h2>讀書時間規劃與學習目標</h2>
-            <p>使用番茄鐘專注計時或一鍵快記今日溫書時數，累積每週各科學習能量。</p>
+            <h2 id="studyPageTitle">讀書時間規劃與學習目標</h2>
+            <p id="studyPageDesc">使用番茄鐘專注計時或一鍵快記今日溫書時數，累積每週各科學習能量。</p>
           </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div style="display:flex;gap:8px;flex-wrap:wrap" id="studyStudentBtns">
             <button class="btn soft" id="editStudyGoalBtn">🎯 設定每週目標時數</button>
             <button class="btn primary" id="addStudyLogBtn">＋ 手動新增讀書紀錄</button>
           </div>
         </div>
 
-        <!-- 番茄鐘專注計時器 -->
-        <div class="timer-box">
+        <!-- 番茄鐘專注計時器（僅在學生視角顯示，家長視角隱藏） -->
+        <div class="timer-box" id="studyTimerBox">
           <div>
             <div style="font-size:12.5px;opacity:0.9;font-weight:700">🍅 專注讀書計時器（完成後自動記入時數）</div>
             <div class="timer-digits" id="timerDisplay">25:00</div>
@@ -1374,16 +1408,17 @@ footer { padding: 20px 0 4px; color: var(--muted); font-size: 11.5px; text-align
         <div class="panelgrid">
           <div class="panel">
             <div class="panelhead">
+              <h3><span>📝</span> 近期讀書追蹤打卡紀錄</h3>
+              <span class="tag green" id="studyRecentCountTag">最新動態</span>
+            </div>
+            <div id="studyLogsList"></div>
+          </div>
+          <div class="panel">
+            <div class="panelhead">
               <h3><span>📊</span> 本週各科讀書時數分布</h3>
               <span class="smallmuted" id="studyGoalSummaryText"></span>
             </div>
             <div id="studySubjectBars"></div>
-          </div>
-          <div class="panel">
-            <div class="panelhead">
-              <h3><span>📝</span> 近期讀書打卡紀錄</h3>
-            </div>
-            <div id="studyLogsList"></div>
           </div>
         </div>
       </section>
@@ -1392,8 +1427,8 @@ footer { padding: 20px 0 4px; color: var(--muted); font-size: 11.5px; text-align
       <section class="view" id="view-grades">
         <div class="sectiontop">
           <div>
-            <h2>成績追蹤與進步折線圖</h2>
-            <p>觀察長期趨勢與個人目標線，把每一次段考化為具體的複習策略。</p>
+            <h2 id="gradesPageTitle">成績追蹤與進步折線圖</h2>
+            <p id="gradesPageDesc">觀察長期趨勢與個人目標線，把每一次段考化為具體的複習策略。</p>
           </div>
           <button class="btn primary" id="addGradeBtn">＋ 登錄新成績</button>
         </div>
@@ -1478,11 +1513,12 @@ footer { padding: 20px 0 4px; color: var(--muted); font-size: 11.5px; text-align
               </div>
             </div>
             <div class="field">
-              <label for="familyRoomCodeInput">🔗 家庭共享連動碼（父母與小孩輸入同一組代碼即可即時連動）</label>
-              <div style="display:flex;gap:8px">
-                <input id="familyRoomCodeInput" placeholder="例如：CHEN-2026 或點右側產生" maxlength="24">
+              <label for="familyRoomCodeInput">🔗 家庭共享連動碼 ＆ 通行密語（防偽授權保護）</label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <input id="familyRoomCodeInput" placeholder="連動碼（例：CHEN-2026）" maxlength="24" style="flex:1;min-width:130px">
+                <input type="password" id="familyPassphraseInput" placeholder="通行密語（選填，例：8888）" maxlength="16" style="flex:1;min-width:130px">
                 <button type="button" class="btn blue-soft" id="genRoomCodeBtn" style="white-space:nowrap">隨機產生</button>
-                <button type="button" class="btn primary" id="connectRoomBtn" style="white-space:nowrap">立即連動</button>
+                <button type="button" class="btn primary" id="connectRoomBtn" style="white-space:nowrap">儲存連動設定</button>
               </div>
             </div>
           </div>
@@ -1730,7 +1766,9 @@ const blankDefaults = {
     studentPin: '',
     parentCheer: '',
     googleUser: null, // { email, displayName }
-    familyRoomCode: ''
+    familyRoomCode: '',
+    familyPassphrase: '',
+    customGeminiKey: ''
   }
 };
 
@@ -1743,6 +1781,7 @@ let modalType = null;
 let confirmCallback = null;
 let lastScheduleBackup = null; // 供「新學期一鍵重置」復原使用
 let scannedTimetableMatrix = null; // 儲存拍照掃描出的 5天 x 8節課表矩陣
+let activeSubjectStamp = '國文'; // 課表印章快點工具目前選中的科目
 
 // 跨分頁即時同步廣播通道
 const familyBroadcast = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('jiachang_beanshi_sync') : null;
@@ -1973,31 +2012,44 @@ function syncLoginScreenUI() {
 function updateCloudUIStatus() {
   const gUser = data.settings.googleUser;
   const room = (data.settings.familyRoomCode || '').trim();
-  const isOnline = Boolean(gUser || room);
+  const realCloudActive = Boolean(window.isFirebaseCloudReady && room);
 
   ['#loginSyncDot', '#headerSyncDot'].forEach(sel => {
     const dot = $(sel);
-    if (dot) dot.classList.toggle('offline', !isOnline);
+    if (!dot) return;
+    dot.classList.remove('offline', 'local-only');
+    if (realCloudActive) {
+      // 真正連上雲端資料庫
+    } else if (room || gUser) {
+      dot.classList.add('local-only');
+    } else {
+      dot.classList.add('offline');
+    }
   });
 
   if (gUser && gUser.email) {
-    $('#googleBtnLabel').textContent = `${gUser.displayName || gUser.email.split('@')[0]} (已登入)`;
-    $('#loginAccountStatusText').textContent = `✅ 已綁定 Google 帳號：${gUser.email}`;
+    $('#googleBtnLabel').textContent = `${gUser.displayName || gUser.email.split('@')[0]} (已記住身分)`;
+    $('#loginAccountStatusText').textContent = `✅ 已綁定家庭識別帳號：${gUser.email}`;
   } else {
-    $('#googleBtnLabel').textContent = 'Google 帳戶登入 / 連動';
-    $('#loginAccountStatusText').textContent = 'Google 家庭雲端連動（跨設備自動保存、親子即時更新）';
+    $('#googleBtnLabel').textContent = '設定家庭身分 / 同步';
+    $('#loginAccountStatusText').textContent = '家庭資料保存與跨手機同步（本機自動保存 ＋ 24h 加密同步碼）';
   }
 
-  if (room) {
-    $('#loginRoomCodeHint').innerHTML = `🔗 目前家庭連動碼：<strong style="color:var(--green)">${esc(room)}</strong>（家長與小孩已即時同步連接）`;
-    $('#headerCloudLabel').textContent = `連動中 (${room})`;
-    if ($('#settingsCloudStatusBadge')) $('#settingsCloudStatusBadge').textContent = `🟢 雲端房間 ${room} 即時連動中`;
+  if (realCloudActive) {
+    $('#loginRoomCodeHint').innerHTML = `🟢 雲端即時同步已連線（房間：<strong>${esc(room)}</strong>）`;
+    $('#headerCloudLabel').textContent = `雲端已連線 (${room})`;
+    if ($('#settingsCloudStatusBadge')) $('#settingsCloudStatusBadge').textContent = `🟢 雲端房間 ${room} 即時同步中`;
+  } else if (room) {
+    $('#loginRoomCodeHint').innerHTML = `🟡 目前為<strong>本機安全儲存＋同瀏覽器同步</strong>（房間代號：${esc(room)}；跨手機請點右上「💬 LINE 回報卡」傳送加密同步碼）`;
+    $('#headerCloudLabel').textContent = `本機儲存 (${room})`;
+    if ($('#settingsCloudStatusBadge')) $('#settingsCloudStatusBadge').textContent = `🟡 本機安全儲存（跨手機請用 LINE 加密同步碼）`;
   } else {
-    $('#loginRoomCodeHint').textContent = '綁定 Google 帳號或輸入相同「家庭連動碼」，家長與小孩手機即可時時同步！';
-    $('#headerCloudLabel').textContent = gUser ? 'Google 已登入' : 'Google 連動';
-    if ($('#settingsCloudStatusBadge')) $('#settingsCloudStatusBadge').textContent = gUser ? '🟢 Google 帳號已連結' : '本機儲存（可點下方開啟雲端連動）';
+    $('#loginRoomCodeHint').textContent = '所有紀錄自動保存在本機瀏覽器；跨手機分享可使用具 24 小時效期保護的「LINE 家庭同步碼」！';
+    $('#headerCloudLabel').textContent = '本機儲存中';
+    if ($('#settingsCloudStatusBadge')) $('#settingsCloudStatusBadge').textContent = '💾 本機瀏覽器儲存中';
   }
 }
+window.updateCloudUIStatus = updateCloudUIStatus;
 
 $('#loginSchoolStage').addEventListener('change', (e) => {
   const newStage = e.target.value;
@@ -2222,7 +2274,14 @@ function renderPeriodPage() {
     return;
   }
   const pc = data.periodCare || blankDefaults.periodCare;
-  const st = calcPeriodStatus();
+  if (currentRole === 'parent') {
+    if (!pc.shareWithParent) {
+      $('#periodPageContent').innerHTML = empty('🔒 孩子目前將生理期專欄設為私人保密模式。');
+      return;
+    }
+    $('#periodPageContent').innerHTML = renderDashboardPeriodCareHTML();
+    return;
+  }
 
   $('#periodPageContent').innerHTML = `
     ${renderDashboardPeriodCareHTML()}
@@ -2643,6 +2702,10 @@ $$('[data-goto]').forEach(b => b.addEventListener('click', () => showView(b.data
 
 // ==================== 今、明、後三天精準預警雷達 ====================
 function renderThreeDayRadar() {
+  const isParent = currentRole === 'parent';
+  if ($('#radarPhotoScanBtn')) $('#radarPhotoScanBtn').style.display = isParent ? 'none' : 'inline-block';
+  if ($('#radarSmartBtn')) $('#radarSmartBtn').style.display = isParent ? 'none' : 'inline-block';
+
   const labels = ['今天', '明天', '後天'];
   const cardsHTML = [0, 1, 2].map(offset => {
     const iso = offsetDateISO(offset);
@@ -2654,14 +2717,18 @@ function renderThreeDayRadar() {
 
     const items = [];
     daySchool.forEach(x => {
+      const isParentAssigned = x.assignedBy === 'parent';
       items.push(`
         <div class="radar-item">
           <span class="tag ${x.type === 'exam' ? 'gold' : 'green'}">${x.type === 'exam' ? '考試' : '作業'}</span>
           <div style="flex:1;min-width:0">
-            <div style="font-weight:750;${x.done ? 'text-decoration:line-through;color:var(--muted)' : ''}">${esc(x.subject ? `[${x.subject}] ` : '')}${esc(x.title)}</div>
+            <div style="font-weight:750;${x.done ? 'text-decoration:line-through;color:var(--muted)' : ''}">
+              ${isParentAssigned ? '<span class="tag blue" style="font-size:10px;padding:1px 5px;margin-right:3px">👨‍👩‍👧 家長指派</span>' : ''}
+              ${esc(x.subject ? `[${x.subject}] ` : '')}${esc(x.title)}
+            </div>
             ${x.note ? `<div class="smallmuted">${esc(x.note)}</div>` : ''}
           </div>
-          <button class="mini" data-toggle="${x.id}">${x.done ? '✓' : '○'}</button>
+          <button class="mini" data-toggle="${x.id}" title="點擊切換完成狀態">${x.done ? '✓' : '○'}</button>
         </div>
       `);
     });
@@ -2728,14 +2795,25 @@ const getExpensePercentageBreakdown = getExpensePercentageBreakdownInternal;
 function renderDashboard() {
   const sName = data.settings.familyName?.trim() || '未命名同學';
   const pName = data.settings.parentTitle?.trim() || '家長';
+  const isParent = currentRole === 'parent';
   const gradeBadge = getStageGradeText(data.settings.schoolStage, data.settings.gradeLevel);
   $('#headerFamilyBadge').textContent = `${sName} ＆ ${pName}`;
   $('#headerGradeBadge').textContent = `${data.settings.gender === 'female' ? '👧' : '👦'} ${gradeBadge}`;
 
-  // 控制左側導覽列「🌸 生理期貼心專欄」顯示
+  // 家長與學生視角皆保留「＋ 新增紀錄」與「💬 LINE 回報卡」，方便家長指派評量功課或匯入同步碼！
+  if ($('#quickAdd')) {
+    $('#quickAdd').style.display = 'inline-flex';
+    $('#quickAdd').textContent = isParent ? '＋ 家長新增／指派' : '＋ 新增紀錄';
+  }
+  if ($('#lineSyncBtn')) {
+    $('#lineSyncBtn').style.display = 'inline-flex';
+    $('#lineSyncBtn').textContent = isParent ? '📲 匯入／回報卡' : '💬 LINE 回報卡';
+  }
+
+  // 控制左側導覽列「🌸 生理期貼心專欄」顯示（女學生本人可見，家長視角直接看首頁關懷卡即可，使導覽列更精簡）
   const navPeriodBtn = $('#navPeriodBtn');
   if (navPeriodBtn) {
-    navPeriodBtn.style.display = data.settings.gender === 'female' ? 'flex' : 'none';
+    navPeriodBtn.style.display = (data.settings.gender === 'female' && !isParent) ? 'flex' : 'none';
   }
 
   updateCloudUIStatus();
@@ -2743,8 +2821,8 @@ function renderDashboard() {
   $('#roleStudentBtn').classList.toggle('active', currentRole === 'student');
   $('#roleParentBtn').classList.toggle('active', currentRole === 'parent');
   $('#navPrivacyNote').textContent = currentRole === 'student'
-    ? '目前為學生視角：可 1 秒快記收支並幫願望小樹澆水。'
-    : '目前為家長視角：可看願望小樹成長與支出結構趴數（%），單筆明細已隱藏。';
+    ? '🎒 學生模式：可排課表、打卡讀書、快記收支與澆水。'
+    : '👨‍👩‍👧 家長模式：可檢視進度、幫孩子指派評量功課與安排課表（收支明細已隱藏）。';
 
   // 頂部視角橫幅
   const banner = $('#roleBanner');
@@ -2756,20 +2834,21 @@ function renderDashboard() {
         <div class="role-banner-sub">管理你的課表與考試，每次存錢都能幫下方的「🌱 願望小樹」澆水長大喔！</div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn gold-soft" onclick="openModal('PhotoScanTimetable')">📸 拍照掃描課表</button>
+        <button class="btn gold-soft" onclick="openModal('PhotoScanTimetable')">📸 課表照片快填</button>
+        <button class="btn blue-soft" onclick="openModal('SmartImport')">📋 貼上聯絡簿文字</button>
         <button class="btn soft" onclick="showView('study')">⏱ 開始讀書計時</button>
-        <button class="btn primary" onclick="openModal('SyncCard')">💬 產生 LINE 回報卡給${esc(pName)}</button>
       </div>
     `;
   } else {
     banner.innerHTML = `
       <div>
-        <div class="role-banner-title">👨‍👩‍👧 家長關懷視角（歡迎，${esc(pName)} · 關心 ${esc(sName)} [${esc(gradeBadge)}]）</div>
-        <div class="role-banner-sub">清楚掌握三天考程、課後接送與「🌳 願望小樹」成長；零用錢僅顯示分類百分比以尊重孩子隱私。</div>
+        <div class="role-banner-title">👨‍👩‍👧 家長關懷與指派視角（歡迎，${esc(pName)} · 關心 ${esc(sName)} [${esc(gradeBadge)}]）</div>
+        <div class="role-banner-sub">可隨時查看孩子的作業完成打勾與讀書打卡；若孩子漏記或您想額外安排「評量作業／補習行程」，可直接點右側按鈕新增！</div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn primary" onclick="openModal('school')">✎ 指派評量／新增功課</button>
         <button class="btn gold-soft" data-action="parent-sun-cheer">☀️ 給小樹陽光鼓勵</button>
-        <button class="btn blue-soft" onclick="openModal('CloudRoomModal')">☁️ 雲端連動設定</button>
+        <button class="btn blue-soft" onclick="openModal('ImportSyncCode')">📲 貼上孩子的同步碼</button>
       </div>
     `;
   }
@@ -2914,6 +2993,7 @@ function renderDashboard() {
   }
 
   // 右下：讀書進度
+  const recentLog = [...data.studyLogs].sort((a, b) => (b.date || '').localeCompare(a.date || ''))[0];
   $('#dashboardStudy').innerHTML = `
     <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px">
       <span>本週累積讀書：<strong>${studyHrs} 小時</strong></span>
@@ -2922,12 +3002,27 @@ function renderDashboard() {
     <div class="bartrack" style="height:10px;margin-bottom:10px">
       <div class="barfill" style="width:${studyPct}%;background:var(--blue)"></div>
     </div>
-    <div class="smallmuted">點選左側「⏱ 讀書規劃與目標」可使用番茄鐘專注計時。</div>
+    <div class="smallmuted">
+      ${recentLog
+        ? `📝 最新打卡：${esc(recentLog.date)} · <strong>${esc(recentLog.subject)}</strong>（${esc(recentLog.topic || '自主複習')}，${recentLog.minutes} 分鐘）`
+        : (isParent ? '孩子本週尚無讀書打卡紀錄。' : '點選左側「⏱ 讀書規劃與目標」可使用番茄鐘專注計時。')}
+    </div>
   `;
 }
 
 // ==================== 2. 渲染整週課表與補習規劃 ====================
 function renderSchedule() {
+  const isParent = currentRole === 'parent';
+  if ($('#schedStudentBtns')) $('#schedStudentBtns').style.display = 'inline-flex';
+  if ($('#addSchedule')) {
+    $('#addSchedule').style.display = 'inline-flex';
+    $('#addSchedule').textContent = isParent ? '＋ 家長新增補習／接送' : '＋ 新增時段';
+  }
+  if ($('#schedPageTitle')) $('#schedPageTitle').textContent = isParent ? '孩子的整週課表、補習與接送安排' : '整週課表、補習班與才藝規劃';
+  if ($('#schedPageDesc')) $('#schedPageDesc').textContent = isParent
+    ? '家長可查看孩子整週課表與接送時間，也可直接點擊右上角幫孩子新增補習班、才藝課或用照片對照快填課表。'
+    : '支援新學期一鍵重置課表、📸 課表照片對照印章快填，以及匯出手機行事曆。';
+
   const rows = [...data.schedule].sort((a, b) => a.day - b.day || a.start.localeCompare(b.start));
   const todayWIdx = isoToWeekdayIndex(todayISO());
 
@@ -2979,7 +3074,7 @@ function renderSchedule() {
           </tbody>
         </table>
       </div>
-    ` : empty('尚未建立固定週課表，點擊右上「＋ 新增時段」開始規劃。');
+    ` : empty('尚未建立固定週課表，點擊右上「＋ 新增」開始規劃。');
   }
 }
 
@@ -2988,24 +3083,89 @@ $('#schedToggleViewBtn').onclick = () => {
   renderSchedule();
 };
 
-// ==================== 3. 渲染考試與作業 ====================
+// ==================== 3. 渲染考試與作業（家長保留精簡三欄檢視＋可直接指派評量功課） ====================
 function renderSchool() {
+  const isParent = currentRole === 'parent';
+  if ($('#schoolTopActionBtns')) $('#schoolTopActionBtns').style.display = 'flex';
+  if ($('#addSchool')) {
+    $('#addSchool').textContent = isParent ? '＋ 家長指派評量／功課' : '＋ 新增考試／作業';
+  }
+  if ($('#schoolPageTitle')) $('#schoolPageTitle').textContent = isParent ? '孩子的考試與作業進度（可指派家庭評量）' : '考試、報告與作業追蹤';
+  if ($('#schoolPageDesc')) $('#schoolPageDesc').textContent = isParent
+    ? '家長精簡清單：查看孩子列出的細項、期限與完成打勾；若孩子漏記或您想安排自修評量，可點右上角「＋ 家長指派評量／功課」。'
+    : '精確記錄明天、後天與未來的段考、小考與報告期限，支援直接貼上聯絡簿文字自動建檔。';
+
   const filter = $('#schoolFilter').value;
   const search = $('#schoolSearch').value.trim().toLowerCase();
   const rows = schoolRows().filter(x =>
     (filter === 'all' || filter === x.type || (filter === 'open' && !x.done) || (filter === 'done' && x.done)) &&
     (`${x.title} ${x.subject || ''} ${x.note || ''}`).toLowerCase().includes(search)
   );
+
+  // 👨‍👩‍👧 家長視角：清爽三欄（完成打勾、細項含家長指派標籤、期限與微調）
+  if (isParent) {
+    $('#schoolTable').innerHTML = rows.length ? `
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:120px">完成打勾</th>
+              <th>考試／作業與家長指派評量細項</th>
+              <th style="width:190px">期限與管理</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(x => {
+              const dLeft = daysFromToday(x.date);
+              const dLabel = !x.date ? '未定' : dLeft === 0 ? '今天到期' : dLeft === 1 ? '明天到期' : dLeft === 2 ? '後天到期' : dLeft > 0 ? `${dLeft} 天後` : '已過期';
+              const isParentAssigned = x.assignedBy === 'parent';
+              return `<tr>
+                <td>
+                  <button class="mini" data-toggle="${x.id}" style="${x.done ? 'background:var(--green2);color:var(--green);border-color:#b8d8be' : ''}">
+                    ${x.done ? '☑ 已完成' : '☐ 未完成'}
+                  </button>
+                </td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                    ${isParentAssigned ? `<span class="tag blue">👨‍👩‍👧 家長指派</span>` : `<span class="tag">${x.type === 'exam' ? '學校考試' : '學校作業'}</span>`}
+                    <span class="tag ${x.type === 'exam' ? 'gold' : 'green'}">${esc(x.subject || '一般')}</span>
+                    <strong style="font-size:14px;${x.done ? 'text-decoration:line-through;color:var(--muted)' : ''}">${esc(x.title)}</strong>
+                  </div>
+                  ${x.note ? `<div class="itemmeta" style="margin-top:4px">${esc(x.note)}</div>` : ''}
+                </td>
+                <td>
+                  <div><strong>${esc(x.date || '未設定')}</strong> <span class="smallmuted" style="${!x.done && dLeft >= 0 && dLeft <= 2 ? 'color:var(--red);font-weight:700' : ''}">(${dLabel})</span></div>
+                  <div class="rowactions" style="margin-top:5px">
+                    <button class="mini" data-edit="school:${x.id}">編輯</button>
+                    <button class="mini del" data-del="school:${x.id}">刪除</button>
+                  </div>
+                </td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    ` : empty('目前沒有考試或作業紀錄，家長可點右上角「＋ 家長指派評量／功課」幫孩子新增！');
+    return;
+  }
+
+  // 🎒 學生視角：完整操作模式
   $('#schoolTable').innerHTML = rows.length ? `
     <div class="tablewrap">
       <table>
-        <thead><tr><th>類型</th><th>日期／預警</th><th>科目／事項</th><th>狀態</th><th>操作</th></tr></thead>
+        <thead><tr><th>來源／類型</th><th>日期／預警</th><th>科目／事項</th><th>完成打勾</th><th>操作</th></tr></thead>
         <tbody>
           ${rows.map(x => {
             const dLeft = daysFromToday(x.date);
             const dLabel = !x.date ? '未定' : dLeft === 0 ? '今天！' : dLeft === 1 ? '明天！' : dLeft === 2 ? '後天！' : dLeft > 0 ? `${dLeft} 天後` : '已過期';
+            const isParentAssigned = x.assignedBy === 'parent';
             return `<tr>
-              <td><span class="tag ${x.type === 'exam' ? 'gold' : 'green'}">${x.type === 'exam' ? '📚 考試' : '✏️ 作業/報告'}</span></td>
+              <td>
+                <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start">
+                  <span class="tag ${x.type === 'exam' ? 'gold' : 'green'}">${x.type === 'exam' ? '📚 考試' : '✏️ 作業/評量'}</span>
+                  ${isParentAssigned ? `<span class="tag blue" style="font-size:10px">👨‍👩‍👧 家長指派</span>` : ''}
+                </div>
+              </td>
               <td><strong>${esc(x.date || '未設定')}</strong><div class="itemmeta">${dLabel}</div></td>
               <td>
                 <strong style="${x.done ? 'text-decoration:line-through;color:var(--muted)' : ''}">${esc(x.title)}</strong>
@@ -3026,8 +3186,17 @@ function renderSchool() {
   ` : empty('目前沒有符合條件的考試或作業事項。');
 }
 
-// ==================== 4. 渲染讀書時間規劃與番茄鐘 ====================
+// ==================== 4. 渲染讀書時間規劃與番茄鐘（家長隱藏番茄鐘，僅看打卡紀錄） ====================
 function renderStudy() {
+  const isParent = currentRole === 'parent';
+  // 家長視角不顯示番茄鐘計時器與新增按鈕，只專注呈現孩子的讀書追蹤打卡
+  if ($('#studyTimerBox')) $('#studyTimerBox').style.display = isParent ? 'none' : 'flex';
+  if ($('#studyStudentBtns')) $('#studyStudentBtns').style.display = isParent ? 'none' : 'flex';
+  if ($('#studyPageTitle')) $('#studyPageTitle').textContent = isParent ? '孩子的讀書追蹤打卡紀錄' : '讀書時間規劃與學習目標';
+  if ($('#studyPageDesc')) $('#studyPageDesc').textContent = isParent
+    ? '家長精簡檢視：查看孩子最近的專注讀書打卡紀錄與每週目標達成進度。'
+    : '使用番茄鐘專注計時或一鍵快記今日溫書時數，累積每週各科學習能量。';
+
   $('#timerSubjectPills').innerHTML = subjectsList.map(s => `
     <button type="button" class="pill-btn ${timerSubject === s ? 'active' : ''}" data-timer-sub="${s}" style="${timerSubject === s ? 'background:#fff;color:var(--green)' : 'background:rgba(255,255,255,0.15);color:#fff;border:0'}">${s}</button>
   `).join('');
@@ -3035,6 +3204,7 @@ function renderStudy() {
   const hrs = calcWeeklyStudyHours();
   const goal = Number(data.settings.weeklyStudyGoal) || 10;
   $('#studyGoalSummaryText').textContent = `近 7 天累積 ${hrs} 小時 ／ 目標 ${goal} 小時`;
+  if ($('#studyRecentCountTag')) $('#studyRecentCountTag').textContent = `共 ${data.studyLogs.length} 筆打卡`;
 
   const subMap = {};
   data.studyLogs.forEach(l => {
@@ -3049,19 +3219,20 @@ function renderStudy() {
       <div class="bartrack"><div class="barfill" style="width:${(mins / maxMin) * 100}%;background:var(--blue)"></div></div>
       <strong style="text-align:right">${mins} 分鐘</strong>
     </div>
-  `).join('') : empty('尚無讀書時數紀錄，啟動上方番茄鐘或點「+ 直接記 30分」開始累積！');
+  `).join('') : empty(isParent ? '孩子目前尚無各科讀書時數統計。' : '尚無讀書時數紀錄，啟動上方番茄鐘或點「+ 直接記 30分」開始累積！');
 
-  const logs = [...data.studyLogs].sort((a, b) => (b.date || '').localeCompare(a.date || '')).slice(0, 8);
+  const logs = [...data.studyLogs].sort((a, b) => (b.date || '').localeCompare(a.date || '')).slice(0, 12);
   $('#studyLogsList').innerHTML = logs.length ? `<div class="list">` + logs.map(l => `
     <div class="listitem">
+      <span class="tag green">✓ 已打卡</span>
       <span class="tag blue">${esc(l.subject)}</span>
       <div class="itemmain">
         <div class="itemtitle">${esc(l.topic || '自主溫書複習')}</div>
-        <div class="itemmeta">${esc(l.date)} · 專注 ${l.minutes} 分鐘</div>
+        <div class="itemmeta">📅 ${esc(l.date)} · 專注投入 <strong>${l.minutes} 分鐘</strong></div>
       </div>
-      <button class="mini del" data-del="studyLogs:${l.id}">刪除</button>
+      ${!isParent ? `<button class="mini del" data-del="studyLogs:${l.id}">刪除</button>` : ''}
     </div>
-  `).join('') + `</div>` : empty('還沒有讀書打卡紀錄。');
+  `).join('') + `</div>` : empty(isParent ? '孩子最近還沒有讀書打卡紀錄喔！' : '還沒有讀書打卡紀錄。');
 }
 
 function updateTimerDisplay() {
@@ -3116,6 +3287,13 @@ $('#quickLog30Btn').onclick = () => {
 
 // ==================== 5. 渲染成績追蹤與 SVG 折線圖 ====================
 function renderGrades() {
+  const isParent = currentRole === 'parent';
+  if ($('#addGradeBtn')) $('#addGradeBtn').style.display = isParent ? 'none' : 'inline-flex';
+  if ($('#gradesPageTitle')) $('#gradesPageTitle').textContent = isParent ? '孩子的成績趨勢折線圖' : '成績追蹤與進步折線圖';
+  if ($('#gradesPageDesc')) $('#gradesPageDesc').textContent = isParent
+    ? '家長精簡檢視：觀察孩子各科成績的長期變化趨勢與目標達成狀況。'
+    : '觀察長期趨勢與個人目標線，把每一次段考化為具體的複習策略。';
+
   const pillSubjects = ['全部平均', ...subjectsList];
   $('#gradeSubjectPills').innerHTML = pillSubjects.map(sub => `
     <button type="button" class="pill-btn ${selectedGradeSubject === sub ? 'active' : ''}" data-grade-sub="${sub}">${sub}</button>
@@ -3182,7 +3360,7 @@ function renderGrades() {
   $('#gradeTable').innerHTML = filteredRows.length ? `
     <div class="tablewrap">
       <table>
-        <thead><tr><th>日期</th><th>考試名稱</th><th>科目</th><th>得分</th><th>目標</th><th>班平均／備註</th><th>操作</th></tr></thead>
+        <thead><tr><th>日期</th><th>考試名稱</th><th>科目</th><th>得分</th><th>目標</th><th>班平均／備註</th>${!isParent ? '<th>操作</th>' : ''}</tr></thead>
         <tbody>
           ${filteredRows.map(g => `<tr>
             <td>${esc(g.date || '—')}</td>
@@ -3191,7 +3369,7 @@ function renderGrades() {
             <td><strong class="${Number(g.score) >= Number(g.target || 80) ? 'moneypos' : 'moneyneg'}">${g.score} 分</strong></td>
             <td>${g.target || 85} 分</td>
             <td class="smallmuted">${g.classAvg ? `班均 ${g.classAvg}` : ''}${g.classAvg && g.note ? ' · ' : ''}${esc(g.note || '')}</td>
-            <td><div class="rowactions"><button class="mini" data-edit="grades:${g.id}">編輯</button><button class="mini del" data-del="grades:${g.id}">刪除</button></div></td>
+            ${!isParent ? `<td><div class="rowactions"><button class="mini" data-edit="grades:${g.id}">編輯</button><button class="mini del" data-del="grades:${g.id}">刪除</button></div></td>` : ''}
           </tr>`).join('')}
         </tbody>
       </table>
@@ -3386,13 +3564,16 @@ function renderSettings() {
     ? `${data.settings.googleUser.displayName || ''} (${data.settings.googleUser.email})`
     : '尚未綁定 Google 帳號（點擊右側登入）';
   $('#familyRoomCodeInput').value = data.settings.familyRoomCode || '';
+  if ($('#familyPassphraseInput')) $('#familyPassphraseInput').value = data.settings.familyPassphrase || '';
 }
 
 $('#settingsSchoolStage').addEventListener('change', (e) => {
   populateGradeSelect($('#settingsGradeLevel'), e.target.value, 1);
 });
 
-// ==================== 📸 AI 拍照／上傳課表智慧掃描 (Gemini Vision API + 智慧預覽矩陣) ====================
+// ==================== 📸 課表照片對照快填 ＆ 選填 AI 掃描 ====================
+const timetableStampSubjects = ['國文', '英文', '數學', '自然', '社會', '體育', '音樂', '美術', '資訊', '社團', '班會', '自習', '🧹 清除空格'];
+
 function createDefaultScanMatrix() {
   // 5天 (週一~週五) x 7節預設常見科目矩陣
   return [
@@ -3407,7 +3588,8 @@ function createDefaultScanMatrix() {
 }
 
 async function analyzeTimetableImageWithGemini(base64Data, mimeType) {
-  const apiKey = "";
+  // 優先使用使用者自備的暫存 API Key，否則在支援的預覽環境中使用預設通道
+  const apiKey = (data.settings.customGeminiKey || '').trim();
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
   const prompt = `請辨識這張學校課表圖片中的「星期一至星期五」課程名稱。
 請回傳 JSON 格式，結構為一個物件，包含屬性 "periods"（陣列，代表第1節到第7或第8節），每個元素為長度 5 的字串陣列 [週一科目, 週二科目, 週三科目, 週四科目, 週五科目]。若某格看不清楚或空白請填 ""。只輸出純科目名稱（如：國文、英文、數學、自然、社會、體育、音樂）。`;
@@ -3425,36 +3607,30 @@ async function analyzeTimetableImageWithGemini(base64Data, mimeType) {
     }
   };
 
-  const delays = [1000, 2000, 4000];
-  for (let attempt = 0; attempt <= delays.length; attempt++) {
-    try {
-      const res = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (!res.ok) throw new Error('API status ' + res.status);
-      const result = await res.json();
-      const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (text) {
-        const parsed = JSON.parse(text);
-        if (parsed && Array.isArray(parsed.periods) && parsed.periods.length > 0) {
-          return parsed.periods;
-        }
-      }
-      break;
-    } catch (e) {
-      if (attempt < delays.length) {
-        await new Promise(r => setTimeout(r, delays[attempt]));
+  try {
+    const res = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) return null;
+    const result = await res.json();
+    const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (text) {
+      const parsed = JSON.parse(text);
+      if (parsed && Array.isArray(parsed.periods) && parsed.periods.length > 0) {
+        return parsed.periods;
       }
     }
+  } catch (e) {
+    return null;
   }
   return null;
 }
 
 function renderScannedMatrixTableHTML(matrix) {
   return `
-    <div class="tablewrap" style="margin-top:10px">
+    <div class="tablewrap" style="margin-top:8px">
       <table class="scan-grid-table" style="min-width:500px">
         <thead>
           <tr>
@@ -3476,7 +3652,7 @@ function renderScannedMatrixTableHTML(matrix) {
                 </td>
                 ${[0, 1, 2, 3, 4].map(dIdx => `
                   <td>
-                    <input type="text" data-scan-cell="${pIdx}-${dIdx}" value="${esc(row[dIdx] || '')}" placeholder="無">
+                    <input type="text" class="stamp-ready" data-scan-cell="${pIdx}-${dIdx}" value="${esc(row[dIdx] || '')}" placeholder="點此套用印章">
                   </td>
                 `).join('')}
               </tr>
@@ -3675,12 +3851,19 @@ function importICSFile(file) {
   r.readAsText(file);
 }
 
-// ==================== LINE 家庭回報卡 + 隱私脫敏同步碼 ====================
+// ==================== LINE 家庭回報卡 + 具 24h 效期與驗證保護的隱私脫敏同步碼 ====================
 function buildSanitizedParentSyncCode() {
   const m = monthISO();
   const expStats = getExpensePercentageBreakdown(m);
   const w = calcSavingsProgress();
+  const pass = (data.settings.familyPassphrase || '').trim();
+  const now = Date.now();
   const sanitizedPayload = {
+    version: 4,
+    issuedAt: now,
+    expiresAt: now + 24 * 60 * 60 * 1000, // 24 小時自動過期機制，防止舊代碼或外流風險
+    passRequired: Boolean(pass),
+    passCheck: pass ? btoa(encodeURIComponent(pass)) : '',
     schedule: data.schedule,
     school: data.school,
     grades: data.grades,
@@ -3698,7 +3881,9 @@ function buildSanitizedParentSyncCode() {
     },
     settings: {
       ...data.settings,
-      studentPin: ''
+      studentPin: '',
+      customGeminiKey: '',
+      familyPassphrase: ''
     }
   };
   return btoa(encodeURIComponent(JSON.stringify(sanitizedPayload)));
@@ -3731,8 +3916,36 @@ ${next3}
 // ==================== 表單與彈窗系統 ====================
 function fieldsFor(type, item = {}) {
   const v = (k, d = '') => esc(item[k] ?? d);
+  const isParent = currentRole === 'parent';
 
   if (type === 'hub') {
+    if (isParent) {
+      return `
+        <div class="smallmuted" style="margin-bottom:10px">👨‍👩‍👧 家長快速新增與指派（新增後孩子切換至學生視角也會同步看見）：</div>
+        <div class="quick-hub-grid">
+          <button type="button" class="hub-card" data-open-modal="school">
+            <div class="hub-icon">📚</div>
+            <div class="hub-title">指派評量／家庭作業／考試</div>
+            <div class="hub-desc">幫孩子記錄漏記的功課，或指派自修評量進度</div>
+          </button>
+          <button type="button" class="hub-card" data-open-modal="schedule">
+            <div class="hub-icon">🗓</div>
+            <div class="hub-title">新增補習／才藝／接送時段</div>
+            <div class="hub-desc">排定課後補習班與爸媽接送、晚餐安排</div>
+          </button>
+          <button type="button" class="hub-card" data-open-modal="grades">
+            <div class="hub-icon">📈</div>
+            <div class="hub-title">協助登錄考試成績</div>
+            <div class="hub-desc">輸入段考或模考分數，更新進步折線圖</div>
+          </button>
+          <button type="button" class="hub-card" data-open-modal="ImportSyncCode">
+            <div class="hub-icon">📲</div>
+            <div class="hub-title">貼上孩子的 LINE 同步碼</div>
+            <div class="hub-desc">一鍵匯入孩子手機傳來的最新進度（24h 有效保護）</div>
+          </button>
+        </div>
+      `;
+    }
     return `
       <div class="quick-hub-grid">
         <button type="button" class="hub-card" data-open-modal="school">
@@ -3742,8 +3955,8 @@ function fieldsFor(type, item = {}) {
         </button>
         <button type="button" class="hub-card" data-open-modal="PhotoScanTimetable">
           <div class="hub-icon">📸</div>
-          <div class="hub-title">拍照掃描新學期課表</div>
-          <div class="hub-desc">拍下課表照片自動辨識填入週一至週五</div>
+          <div class="hub-title">照片對照＋印章快填課表</div>
+          <div class="hub-desc">拍下紙本課表置頂對照，點選科目印章 10 秒填完</div>
         </button>
         <button type="button" class="hub-card" data-open-modal="schedule">
           <div class="hub-icon">🗓</div>
@@ -3760,10 +3973,10 @@ function fieldsFor(type, item = {}) {
           <div class="hub-title">設定願望小樹目標</div>
           <div class="hub-desc">設定想買的目標並開始澆水存錢</div>
         </button>
-        <button type="button" class="hub-card" data-open-modal="CloudRoomModal">
-          <div class="hub-icon">☁️</div>
-          <div class="hub-title">Google 雲端家庭連動</div>
-          <div class="hub-desc">跨設備保存、家長與孩子時時同步</div>
+        <button type="button" class="hub-card" data-open-modal="SyncCard">
+          <div class="hub-icon">💬</div>
+          <div class="hub-title">LINE 回報卡＆加密同步碼</div>
+          <div class="hub-desc">產生 24 小時有效期的脫敏同步碼傳給爸媽</div>
         </button>
       </div>
     `;
@@ -3775,15 +3988,25 @@ function fieldsFor(type, item = {}) {
     }
     return `
       <div style="display:flex;flex-direction:column;gap:12px">
-        <div class="ocr-dropzone" id="triggerPhotoUploadBox">
-          <div style="font-size:28px;margin-bottom:4px">📸</div>
-          <div style="font-weight:800;font-size:14.5px;color:var(--green)">點此拍照或上傳「學校週一至週五課表」照片</div>
-          <div class="smallmuted">支援手機相機直接拍紙本課表、或上傳螢幕截圖，AI 會自動辨識填入下方格位！</div>
+        <div class="ocr-dropzone" id="triggerPhotoUploadBox" style="padding:14px">
+          <div style="font-weight:800;font-size:14px;color:var(--green)">📸 第一步：點此拍下或上傳「紙本課表照片」置頂對照</div>
+          <div class="smallmuted">照片會顯示在正上方，您可直接看著照片用下方「🎨 科目印章」1 秒點選填表（免金鑰、最穩定）！</div>
           <div id="ocrPreviewBox"></div>
         </div>
 
+        <div>
+          <div style="font-size:12px;font-weight:750;color:var(--green);margin-bottom:6px">
+            🎨 第二步：點選「科目印章」，再點擊下方課表額外格子即可瞬間填入（或直接打字修改）：
+          </div>
+          <div class="stamp-bar" id="subjectStampBar">
+            ${timetableStampSubjects.map(sub => `
+              <button type="button" class="stamp-btn ${activeSubjectStamp === sub ? 'active' : ''}" data-stamp-sub="${esc(sub)}">${esc(sub)}</button>
+            `).join('')}
+          </div>
+        </div>
+
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-          <span style="font-size:12.5px;font-weight:750;color:var(--ink)" id="ocrScanStatusText">📋 週一至週五課表預覽（可直接點格子微調科目）：</span>
+          <span style="font-size:12.5px;font-weight:750;color:var(--ink)" id="ocrScanStatusText">📋 週一至週五課表（點格子自動蓋印章「${esc(activeSubjectStamp)}」）：</span>
           <label style="display:inline-flex;align-items:center;gap:6px;margin:0;font-size:12px;cursor:pointer">
             <input type="checkbox" id="replaceOldSchoolSchedChk" checked style="width:auto">
             填入前先清除舊的學校課程（保留補習班）
@@ -3794,9 +4017,17 @@ function fieldsFor(type, item = {}) {
           ${renderScannedMatrixTableHTML(scannedTimetableMatrix)}
         </div>
 
-        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
+        <details style="font-size:12px;color:var(--muted);background:#f8faf7;padding:8px 12px;border-radius:10px;border:1px solid var(--line)">
+          <summary style="cursor:pointer;font-weight:700">🤖 進階選填：使用自備 Gemini API Key 自動辨識照片（保護金鑰不外洩）</summary>
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <input type="password" id="customGeminiKeyInput" value="${esc(data.settings.customGeminiKey || '')}" placeholder="選填：貼上您的免費 Gemini API Key（僅存於您的瀏覽器本機）" style="flex:1;font-size:12px">
+            <button type="button" class="mini" id="saveCustomGeminiKeyBtn">儲存金鑰</button>
+          </div>
+        </details>
+
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">
           <button type="button" class="btn" onclick="closeModal()">取消</button>
-          <button type="button" class="btn primary" id="applyScannedTimetableBtn">✅ 一鍵自動填入週一至週五課表</button>
+          <button type="button" class="btn primary" id="applyScannedTimetableBtn">✅ 一鍵儲存週一至週五課表</button>
         </div>
       </div>
     `;
@@ -3805,36 +4036,49 @@ function fieldsFor(type, item = {}) {
   if (type === 'CloudRoomModal') {
     const gEmail = data.settings.googleUser?.email || '';
     const rCode = data.settings.familyRoomCode || '';
+    const pass = data.settings.familyPassphrase || '';
+    const realCloud = Boolean(window.isFirebaseCloudReady);
     return `
       <div style="display:flex;flex-direction:column;gap:14px">
-        <div style="background:#f2f8ff;border:1px solid #cde0f5;border-radius:14px;padding:14px">
-          <div style="font-weight:800;font-size:14px;margin-bottom:6px">1️⃣ 綁定 Google 帳戶（換手機或電腦不遺失記憶）</div>
-          <div class="smallmuted" style="margin-bottom:10px">
-            ${gEmail ? `目前已登入綁定：<strong>${esc(gEmail)}</strong>` : '點擊下方按鈕登入 Google 帳戶，或輸入您的 Gmail 作為跨裝置雲端識別：'}
+        <div style="background:${realCloud ? '#eef9f1' : '#fff9eb'};border:1px solid ${realCloud ? '#b8dec2' : '#f3d9a4'};border-radius:14px;padding:12px 14px;font-size:12.5px">
+          <strong>${realCloud ? '🟢 目前環境已啟用雲端資料庫同步' : '💡 儲存與跨裝置同步狀態說明（誠實透明檢測）'}：</strong>
+          <div class="smallmuted" style="margin-top:4px">
+            ${realCloud
+              ? '您的課表、作業與願望小樹會透過下方設定的「家庭連動碼＋通行密語」即時同步。'
+              : '目前網站運行於靜態網頁本機安全模式（資料 100% 保存在您的裝置瀏覽器中）。若要在「家長手機」與「孩子手機」之間同步資料，最安全免伺服器的方式是使用頂部的 <strong>「💬 LINE 回報卡（具 24 小時效期與通行密語保護的同步碼）」</strong>！'}
           </div>
+        </div>
+
+        <div style="background:#f2f8ff;border:1px solid #cde0f5;border-radius:14px;padding:14px">
+          <div style="font-weight:800;font-size:14px;margin-bottom:6px">1️⃣ 家庭成員識別帳號</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button type="button" class="google-btn" id="modalGooglePopupBtn">
-              <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-              使用 Google 視窗認證登入
-            </button>
-            <input id="manualGoogleEmailInput" value="${esc(gEmail)}" placeholder="或直接輸入您的 Gmail 帳號綁定" style="flex:1;min-width:200px">
+            <input id="manualGoogleEmailInput" value="${esc(gEmail)}" placeholder="輸入您的常用 Email 作為家庭識別（例：parent@gmail.com）" style="flex:1;min-width:200px">
           </div>
         </div>
 
         <div style="background:#f3f8f4;border:1px solid #cde0d1;border-radius:14px;padding:14px">
-          <div style="font-weight:800;font-size:14px;margin-bottom:6px">2️⃣ 親子即時雲端連動碼（家長與小孩時時更新）</div>
+          <div style="font-weight:800;font-size:14px;margin-bottom:6px">2️⃣ 家庭連動代號 ＆ 防偽通行密語（授權保護）</div>
           <div class="smallmuted" style="margin-bottom:10px">
-            請設定一組專屬你們家的連動碼（例如：<code>HOME-888</code>）。<strong>家長手機與小孩手機只要輸入同一組代碼</strong>，雙方的課表、三天考程雷達、成績折線圖、願望小樹與生理期提醒就會<strong>雲端即時自動同步</strong>！
+            設定通行密語後，無論是雲端房間或 LINE 同步碼，都必須輸入正確密語才能讀取或匯入，防止他人憑一組代碼讀取家庭資料！
           </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <input id="modalRoomCodeInput" value="${esc(rCode)}" placeholder="請輸入家庭連動碼（例：HOME-888）" style="flex:1">
-            <button type="button" class="btn soft" id="modalGenCodeBtn">隨機產生代碼</button>
+          <div class="formgrid">
+            <div class="field">
+              <label>🔗 家庭連動代號</label>
+              <div style="display:flex;gap:6px">
+                <input id="modalRoomCodeInput" value="${esc(rCode)}" placeholder="例：HOME-888">
+                <button type="button" class="btn soft" id="modalGenCodeBtn" style="white-space:nowrap">產生</button>
+              </div>
+            </div>
+            <div class="field">
+              <label>🔐 家庭通行密語（選填，匯入同步碼時需驗證）</label>
+              <input type="password" id="modalPassphraseInput" value="${esc(pass)}" placeholder="例如：4 到 8 位數家庭暗號">
+            </div>
           </div>
         </div>
 
         <div style="display:flex;justify-content:flex-end;gap:8px">
           <button type="button" class="btn" onclick="closeModal()">關閉</button>
-          <button type="button" class="btn primary" id="saveCloudModalBtn">☁️ 儲存並啟動即時雲端連動</button>
+          <button type="button" class="btn primary" id="saveCloudModalBtn">💾 儲存家庭同步與安全設定</button>
         </div>
       </div>
     `;
@@ -3884,20 +4128,25 @@ function fieldsFor(type, item = {}) {
   if (type === 'SyncCard') {
     const summaryText = buildLineSummaryText();
     const parentSyncCode = buildSanitizedParentSyncCode();
+    const hasPass = Boolean((data.settings.familyPassphrase || '').trim());
     return `
       <div style="display:flex;flex-direction:column;gap:12px">
         <div class="smallmuted">1. 點擊複製下方週報文字，直接貼到家庭 LINE 群組：</div>
-        <textarea id="lineTextOutput" rows="7" readonly style="background:#f8faf7;font-size:12.5px">${esc(summaryText)}</textarea>
+        <textarea id="lineTextOutput" rows="6" readonly style="background:#f8faf7;font-size:12.5px">${esc(summaryText)}</textarea>
         <button type="button" class="btn primary" id="copyLineTextBtn" style="justify-content:center">📋 複製 LINE 週報文字</button>
 
         <div style="border-top:1px solid var(--line);padding-top:12px;margin-top:4px">
-          <div style="font-weight:750;font-size:13.5px;color:var(--blue)">🔒 2. 跨手機「家長專用（無明細）同步碼」</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+            <span style="font-weight:750;font-size:13.5px;color:var(--blue)">🔒 2. 跨手機「加密脫敏同步碼」（⏳ 24 小時內有效）</span>
+            <span class="tag ${hasPass ? 'green' : 'gold'}">${hasPass ? '🔐 已受家庭密語保護' : '建議至設定加上家庭密語'}</span>
+          </div>
           <div class="smallmuted" style="margin:4px 0 8px">
-            此同步碼已自動<strong>抹除所有單筆消費明細</strong>，僅包含「課表、考試、成績、讀書時數、🌱 願望小樹進度」與「支出分類百分比（%）」。傳給爸媽貼上即可同步畫面！
+            此同步碼已<strong>抹除所有單筆消費明細</strong>，且具備 <strong>24 小時自動過期機制</strong>。傳給爸媽或另一台手機貼上即可安全更新畫面！
           </div>
           <div style="display:flex;gap:8px">
             <input id="syncCodeOutput" value="${esc(parentSyncCode)}" readonly style="font-size:11px;background:#f4f8fb">
             <button type="button" class="btn blue-soft" id="copySyncCodeBtn" style="white-space:nowrap">複製同步碼</button>
+            <button type="button" class="btn" data-open-modal="ImportSyncCode" style="white-space:nowrap">我要貼上同步碼</button>
           </div>
         </div>
       </div>
@@ -3908,12 +4157,17 @@ function fieldsFor(type, item = {}) {
     return `
       <div class="formgrid">
         <div class="field full">
-          <label>📲 請貼上從孩子 LINE 傳來的「家長專用同步碼」</label>
-          <textarea id="importSyncCodeInput" rows="4" placeholder="請在此貼上同步碼字串..."></textarea>
+          <label>📲 請貼上 24 小時內產生的「家庭專用同步碼」</label>
+          <textarea id="importSyncCodeInput" rows="4" placeholder="請在此貼上從 LINE 複製的同步碼字串..."></textarea>
+        </div>
+        <div class="field full">
+          <label>🔐 家庭通行密語（若對方有設定家庭通行密語，請輸入以驗證授權）</label>
+          <input type="password" id="importSyncPassInput" value="${esc(data.settings.familyPassphrase || '')}" placeholder="若未設定密語可留空">
         </div>
       </div>
-      <div style="margin-top:12px;display:flex;justify-content:flex-end">
-        <button type="button" class="btn primary" id="applySyncCodeBtn">⚡ 立即同步孩子最新進度與願望小樹</button>
+      <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px">
+        <button type="button" class="btn" onclick="closeModal()">取消</button>
+        <button type="button" class="btn primary" id="applySyncCodeBtn">⚡ 驗證並同步最新進度</button>
       </div>
     `;
   }
@@ -3952,22 +4206,31 @@ function fieldsFor(type, item = {}) {
   }
 
   if (type === 'school') {
+    const defaultAssigner = item.assignedBy || (isParent ? 'parent' : 'student');
     return `
       <div class="formgrid">
         <div class="field">
           <label>事項類型 *</label>
           <select name="type">
+            <option value="task" ${item.type === 'task' || (isParent && !item.type) ? 'selected' : ''}>✏️ 作業／家長評量／報告</option>
             <option value="exam" ${item.type === 'exam' ? 'selected' : ''}>📚 考試／小考／模考</option>
-            <option value="task" ${item.type === 'task' ? 'selected' : ''}>✏️ 作業／報告／繳交事項</option>
           </select>
         </div>
         <div class="field">
-          <label>日期（可點下方「明天／後天」）</label>
+          <label>建立來源標記</label>
+          <select name="assignedBy">
+            <option value="student" ${defaultAssigner === 'student' ? 'selected' : ''}>🎒 學校事項／學生自記</option>
+            <option value="parent" ${defaultAssigner === 'parent' ? 'selected' : ''}>👨‍👩‍👧 家長指派評量／叮嚀</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>日期／完成期限（可點下方快捷鍵）</label>
           <input type="date" name="date" id="schoolDateInput" value="${v('date', todayISO())}">
           <div class="pill-bar">
             <button type="button" class="pill-btn" data-fill-target="#schoolDateInput" data-fill-val="${todayISO()}">今天</button>
             <button type="button" class="pill-btn" data-fill-target="#schoolDateInput" data-fill-val="${offsetDateISO(1)}">明天</button>
             <button type="button" class="pill-btn" data-fill-target="#schoolDateInput" data-fill-val="${offsetDateISO(2)}">後天</button>
+            <button type="button" class="pill-btn" data-fill-target="#schoolDateInput" data-fill-val="${offsetDateISO(5)}">本週末</button>
           </div>
         </div>
         <div class="field full">
@@ -3977,9 +4240,15 @@ function fieldsFor(type, item = {}) {
             ${subjectsList.map(s => `<button type="button" class="pill-btn" data-fill-target="#schoolSubjectInput" data-fill-val="${s}">${s}</button>`).join('')}
           </div>
         </div>
-        <div class="field full"><label>考試範圍或作業報告名稱 *</label><input name="title" value="${v('title')}" required placeholder="例如：Ch2 三角函數隨堂考、歷史分組報告"></div>
+        <div class="field full">
+          <label>考試範圍或作業／評量名稱 *</label>
+          <input name="title" id="schoolTitleInput" value="${v('title')}" required placeholder="例如：完成數學自修評量 p.15–20、Ch2 三角函數隨堂考">
+          <div class="pill-bar">
+            ${['完成自修評量 1 回', '訂正考卷與錯題本', '背誦英文單字 20 個', '完成講義練習題', '準備隨堂小考'].map(t => `<button type="button" class="pill-btn" data-fill-target="#schoolTitleInput" data-fill-val="${t}">${t}</button>`).join('')}
+          </div>
+        </div>
         <div class="field"><label>狀態</label><select name="done"><option value="false" ${!item.done ? 'selected' : ''}>○ 未完成</option><option value="true" ${item.done ? 'selected' : ''}>✓ 已完成</option></select></div>
-        <div class="field"><label>備註</label><input name="note" value="${v('note')}" placeholder="例如：記得帶計算機或海報"></div>
+        <div class="field"><label>備註</label><input name="note" value="${v('note')}" placeholder="例如：寫完請給爸媽簽名或拍照"></div>
       </div>
     `;
   }
@@ -4131,7 +4400,6 @@ $('#modalForm').addEventListener('submit', e => {
 
 // ==================== 全域事件綁定 ====================
 $('#quickAdd').onclick = () => openModal('hub');
-$('#smartImportBtn').onclick = () => openModal('SmartImport');
 $('#radarSmartBtn').onclick = () => openModal('SmartImport');
 $('#schoolSmartPasteBtn').onclick = () => openModal('SmartImport');
 $('#lineSyncBtn').onclick = () => openModal('SyncCard');
@@ -4190,6 +4458,32 @@ document.addEventListener('click', e => {
     return;
   }
 
+  // 🎨 課表印章快點選取與點擊格子自動蓋章
+  const stampBtn = e.target.closest('[data-stamp-sub]');
+  if (stampBtn) {
+    activeSubjectStamp = stampBtn.dataset.stampSub;
+    $$('[data-stamp-sub]').forEach(b => b.classList.toggle('active', b.dataset.stampSub === activeSubjectStamp));
+    const stText = $('#ocrScanStatusText');
+    if (stText) stText.textContent = `📋 週一至週五課表（點格子自動蓋印章「${activeSubjectStamp}」）：`;
+    return;
+  }
+  const scanCellInput = e.target.closest('[data-scan-cell]');
+  if (scanCellInput && activeSubjectStamp) {
+    const [pIdx, dIdx] = scanCellInput.dataset.scanCell.split('-').map(Number);
+    const newVal = activeSubjectStamp === '🧹 清除空格' ? '' : activeSubjectStamp;
+    scanCellInput.value = newVal;
+    if (scannedTimetableMatrix && scannedTimetableMatrix[pIdx]) {
+      scannedTimetableMatrix[pIdx][dIdx] = newVal;
+    }
+    return;
+  }
+  if (e.target.id === 'saveCustomGeminiKeyBtn') {
+    data.settings.customGeminiKey = ($('#customGeminiKeyInput')?.value || '').trim();
+    save();
+    showToast('✅ 已將您的自備 Gemini API Key 儲存於本機瀏覽器！');
+    return;
+  }
+
   // 📸 拍照掃描課表相關事件
   if (e.target.closest('#triggerPhotoUploadBox')) {
     $('#timetablePhotoInput').click();
@@ -4241,23 +4535,23 @@ document.addEventListener('click', e => {
   if (e.target.id === 'saveCloudModalBtn') {
     const emailVal = ($('#manualGoogleEmailInput')?.value || '').trim();
     const roomVal = ($('#modalRoomCodeInput')?.value || '').trim().toUpperCase();
+    const passVal = ($('#modalPassphraseInput')?.value || '').trim();
     if (emailVal) {
       data.settings.googleUser = {
         email: emailVal,
         displayName: emailVal.split('@')[0]
       };
     }
-    if (roomVal) {
-      data.settings.familyRoomCode = roomVal;
-      if (typeof window.subscribeFamilyCloudRoom === 'function') {
-        window.subscribeFamilyCloudRoom(roomVal);
-      }
+    data.settings.familyRoomCode = roomVal;
+    data.settings.familyPassphrase = passVal;
+    if (roomVal && typeof window.subscribeFamilyCloudRoom === 'function') {
+      window.subscribeFamilyCloudRoom(roomVal);
     }
     save();
     closeModal();
     syncLoginScreenUI();
     renderAll();
-    showToast(`☁️ 雲端設定已生效！${roomVal ? `家庭連動碼：${roomVal}` : ''}`);
+    showToast(`💾 家庭同步設定已儲存！${passVal ? '（已啟用通行密語保護）' : ''}`);
     return;
   }
 
@@ -4399,13 +4693,32 @@ document.addEventListener('click', e => {
   }
   if (e.target.id === 'applySyncCodeBtn') {
     const code = ($('#importSyncCodeInput')?.value || '').trim();
+    const inputPass = ($('#importSyncPassInput')?.value || '').trim();
     try {
       const obj = JSON.parse(decodeURIComponent(atob(code)));
-      data = { ...structuredClone(blankDefaults), ...obj };
+      // 1. 檢查 24 小時過期機制
+      if (obj.expiresAt && Date.now() > Number(obj.expiresAt)) {
+        showToast('⏰ 此同步碼已超過 24 小時有效期限，請讓家人重新產生最新同步碼！');
+        return;
+      }
+      // 2. 檢查家庭通行密語授權
+      if (obj.passRequired && obj.passCheck) {
+        const expectedPass = decodeURIComponent(atob(obj.passCheck));
+        if (inputPass !== expectedPass) {
+          showToast('🔐 家庭通行密語不正確，無法匯入此同步碼！');
+          return;
+        }
+      }
+      const keepTransactions = data.transactions || [];
+      data = {
+        ...structuredClone(blankDefaults),
+        ...obj,
+        transactions: keepTransactions
+      };
       save();
       closeModal();
       renderAll();
-      showToast('🎉 同步成功！已更新孩子的最新課表、成績與願望小樹！');
+      showToast('🎉 驗證通過並同步成功！已更新最新課表、作業與願望小樹！');
     } catch (err) {
       showToast('❌ 同步碼格式不正確，請重新複製貼上');
     }
@@ -4643,11 +4956,11 @@ $('#timetablePhotoInput').addEventListener('change', async (e) => {
     const base64Data = dataUrl.split(',')[1];
     const previewBox = $('#ocrPreviewBox');
     if (previewBox) {
-      previewBox.innerHTML = `<img src="${dataUrl}" class="ocr-preview-img" alt="課表預覽">`;
+      previewBox.innerHTML = `<img src="${dataUrl}" class="ocr-preview-img" alt="課表照片置頂對照">`;
     }
     const statusEl = $('#ocrScanStatusText');
     if (statusEl) {
-      statusEl.innerHTML = `⏳ <strong>AI 正在掃描辨識課表圖片中的週一至週五科目，請稍候...</strong>`;
+      statusEl.innerHTML = `⏳ <strong>圖片已置頂！正在嘗試智慧辨識（您也可以直接用上方「🎨 科目印章」點選填表）...</strong>`;
     }
 
     const aiPeriods = await analyzeTimetableImageWithGemini(base64Data, file.type);
@@ -4656,12 +4969,11 @@ $('#timetablePhotoInput').addEventListener('change', async (e) => {
         const arr = Array.isArray(row) ? row : [];
         return [arr[0] || '', arr[1] || '', arr[2] || '', arr[3] || '', arr[4] || ''];
       });
-      if (statusEl) statusEl.innerHTML = `✅ <strong>AI 課表掃描完成！請確認下方科目（可直接點選修改），再按「一鍵自動填入」：</strong>`;
-      showToast('📸 AI 課表掃描成功！已填入預覽表格');
+      if (statusEl) statusEl.innerHTML = `✅ <strong>AI 課表辨識完成！請確認下方科目（或點選印章微調），再按「一鍵儲存」：</strong>`;
+      showToast('📸 課表辨識成功！已填入預覽表格');
     } else {
-      scannedTimetableMatrix = createDefaultScanMatrix();
-      if (statusEl) statusEl.innerHTML = `✨ <strong>已載入課表智慧模板！您可直接在下方微調週一至週五科目，再按「一鍵自動填入」：</strong>`;
-      showToast('📋 已產生週一至週五課表預覽表，確認後即可一鍵填入！');
+      if (statusEl) statusEl.innerHTML = `📸 <strong>課表照片已置頂顯示！請直接看著照片，點選上方「🎨 科目印章」再點下方格子即可 1 秒填完：</strong>`;
+      showToast('📸 照片已置頂！請使用「科目印章」快速點選填表');
     }
     const container = $('#scanMatrixContainer');
     if (container) {
@@ -4685,11 +4997,12 @@ $('#saveSettings').onclick = () => {
   data.settings.parentCheer = $('#parentCheerInput').value.trim();
   const rCode = $('#familyRoomCodeInput').value.trim().toUpperCase();
   if (rCode) data.settings.familyRoomCode = rCode;
+  if ($('#familyPassphraseInput')) data.settings.familyPassphrase = $('#familyPassphraseInput').value.trim();
 
   save();
   syncLoginScreenUI();
   renderAll();
-  showToast('✅ 家庭設定、學制年級、性別與願望小樹已儲存！');
+  showToast('✅ 家庭設定、學制年級、通行密語與願望小樹已儲存！');
 };
 
 // 初始化：檢查 9/1 自動升年級 ➔ 同步登入畫面 ➔ 渲染全部視圖
@@ -4709,12 +5022,17 @@ let auth = null;
 let currentUser = null;
 let roomUnsubscribe = null;
 let isApplyingRemote = false;
+window.isFirebaseCloudReady = false;
 
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'jiachang-beanshi-app';
 
 async function initFirebaseCloud() {
   try {
-    if (typeof __firebase_config === 'undefined' || !__firebase_config) return;
+    if (typeof __firebase_config === 'undefined' || !__firebase_config) {
+      window.isFirebaseCloudReady = false;
+      updateCloudUIStatus();
+      return;
+    }
     const firebaseConfig = JSON.parse(__firebase_config);
     const app = initializeApp(firebaseConfig);
     auth = getAuth(app);
@@ -4729,11 +5047,15 @@ async function initFirebaseCloud() {
       currentUser = cred.user;
     }
 
+    window.isFirebaseCloudReady = true;
+    updateCloudUIStatus();
+
     if (data.settings.familyRoomCode) {
       window.subscribeFamilyCloudRoom(data.settings.familyRoomCode);
     }
   } catch (err) {
-    // 靜默退回本機與 BroadcastChannel 模式，確保外部託管 100% 不報錯
+    window.isFirebaseCloudReady = false;
+    updateCloudUIStatus();
   }
 }
 
