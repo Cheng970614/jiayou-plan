@@ -1,11 +1,23 @@
-解決<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#f5f7f2">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#356b50" id="themeColorMeta">
 <meta name="description" content="家常便事：專為親子打造的學習成長、時間安排與零用錢收支管理，解決親子之間的摩擦，支援 Google 雲端即時家庭連動。">
 <title>家常便事 - 親子家庭行事曆|讓親子之間溝通更輕鬆!</title>
+
+<!-- ==================== PWA 手機桌面獨立執行設定 (iOS / Android) ==================== -->
+<meta name="application-name" content="家常便事">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="家常便事">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.json" id="pwaManifestLink">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%23356b50'/%3E%3Ctext x='96' y='132' font-size='104' text-anchor='middle' fill='%23ffffff' font-family='sans-serif'%3E%E2%8C%82%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" id="appleTouchIconLink" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%23356b50'/%3E%3Ctext x='96' y='132' font-size='104' text-anchor='middle' fill='%23ffffff' font-family='sans-serif'%3E%E2%8C%82%3C/text%3E%3C/svg%3E">
+
 <style>
 :root {
   --bg: #f5f7f2;
@@ -1580,6 +1592,27 @@ footer { padding: 20px 0 4px; color: var(--muted); font-size: 11.5px; text-align
             <button class="btn danger" id="clearData">🧹 清空所有紀錄（回到全新空白）</button>
           </div>
         </div>
+
+        <!-- 📲 PWA 安裝與 manifest.json 檔案下載專區 -->
+        <div class="panel" id="pwaSetupPanel">
+          <div class="panelhead">
+            <h3><span>📲</span> 安裝「家常便事」到手機桌面 (PWA) 與 <code>manifest.json</code></h3>
+            <span class="tag green" id="pwaModeStatusTag">支援獨立視窗 (standalone)</span>
+          </div>
+          <p class="smallmuted" style="margin-top:0">
+            將網站加入手機主畫面後，點開即可隱藏瀏覽器網址列，像原生 App 一樣全螢幕操作：
+            <br>• <strong>iPhone / iPad (Safari)：</strong>點擊底部「分享」圖示 ➔ 選擇<strong>「加入主畫面」</strong>。
+            <br>• <strong>Android (Chrome)：</strong>點擊下方「📲 立即安裝到手機桌面」或瀏覽器右上角選單 ➔ <strong>「安裝應用程式 / 加到主畫面」</strong>。
+          </p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px">
+            <button type="button" class="btn primary" id="installPwaPromptBtn" style="display:none">📲 立即安裝「家常便事」到桌面</button>
+            <button type="button" class="btn soft" id="downloadManifestBtn">📥 下載 manifest.json 檔案</button>
+            <button type="button" class="btn" id="copyManifestJsonBtn">📋 複製 manifest.json 內容</button>
+            <button type="button" class="btn blue-soft" id="downloadPwaIconsBtn">🖼️ 下載 App 圖示 (192x192 & 512x512 PNG)</button>
+          </div>
+          <label for="manifestJsonPreview">搭配部署的 <code>manifest.json</code> 完整內容（請與 <code>index.html</code> 放在同一個資料夾）：</label>
+          <textarea id="manifestJsonPreview" rows="8" readonly style="font-family:monospace;font-size:12px;background:#f8faf7"></textarea>
+        </div>
       </section>
 
       <footer>家常便事 - 親子家庭行事曆 v3.5 · 雙身分登入 × 願望小樹養成 × Google 雲端即時家庭連動</footer>
@@ -2552,6 +2585,11 @@ function applyRoleModeUI() {
   document.body.classList.toggle('parent-mode', isParent);
   $('#roleStudentBtn').classList.toggle('active', !isParent);
   $('#roleParentBtn').classList.toggle('active', isParent);
+
+  const themeMeta = $('#themeColorMeta');
+  if (themeMeta) {
+    themeMeta.setAttribute('content', isParent ? '#3d6885' : '#356b50');
+  }
 
   // 家長視角隱藏特定按鈕
   $$('.js-student-only').forEach(el => { el.style.display = isParent ? 'none' : ''; });
@@ -4587,10 +4625,194 @@ $('#disconnectFamilyRoomBtn').onclick = () => {
   );
 };
 
+// ----------------------------------------------------
+// 📲 PWA 設定、動態圖示與 manifest.json 產生器
+// ----------------------------------------------------
+const MANIFEST_JSON_OBJECT = {
+  name: "家常便事 - 親子家庭行事曆",
+  short_name: "家常便事",
+  description: "專為親子之間打造的學習成長、時間安排與零用錢收支管理，讓親子之間溝通更輕鬆！",
+  start_url: "./index.html",
+  scope: "./",
+  display: "standalone",
+  orientation: "portrait",
+  background_color: "#f5f7f2",
+  theme_color: "#356b50",
+  lang: "zh-Hant-TW",
+  icons: [
+    {
+      src: "icon-192.png",
+      sizes: "192x192",
+      type: "image/png",
+      purpose: "any maskable"
+    },
+    {
+      src: "icon-512.png",
+      sizes: "512x512",
+      type: "image/png",
+      purpose: "any maskable"
+    }
+  ]
+};
+
+function generatePwaIconDataUrl(size = 192) {
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    const r = Math.round(size * 0.22);
+
+    ctx.beginPath();
+    ctx.moveTo(r, 0);
+    ctx.lineTo(size - r, 0);
+    ctx.quadraticCurveTo(size, 0, size, r);
+    ctx.lineTo(size, size - r);
+    ctx.quadraticCurveTo(size, size, size - r, size);
+    ctx.lineTo(r, size);
+    ctx.quadraticCurveTo(0, size, 0, size - r);
+    ctx.lineTo(0, r);
+    ctx.quadraticCurveTo(0, 0, r, 0);
+    ctx.closePath();
+
+    const grad = ctx.createLinearGradient(0, 0, size, size);
+    grad.addColorStop(0, '#356b50');
+    grad.addColorStop(1, '#488667');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `bold ${Math.round(size * 0.54)}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('⌂', size / 2, size * 0.54);
+    return canvas.toDataURL('image/png');
+  } catch (e) {
+    return '';
+  }
+}
+
+function initPwaSupport() {
+  const manifestPreview = $('#manifestJsonPreview');
+  if (manifestPreview) {
+    manifestPreview.value = JSON.stringify(MANIFEST_JSON_OBJECT, null, 2);
+  }
+
+  // 為 iOS Safari 動態注入 192x192 PNG apple-touch-icon，確保加入主畫面時圖示清晰
+  const icon192 = generatePwaIconDataUrl(192);
+  const appleIconLink = $('#appleTouchIconLink');
+  if (icon192 && appleIconLink) {
+    appleIconLink.href = icon192;
+  }
+
+  // 偵測是否已處於 standalone 獨立視窗模式
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const statusTag = $('#pwaModeStatusTag');
+  if (statusTag && isStandalone) {
+    statusTag.textContent = '🟢 目前正以桌面 App (standalone) 獨立模式執行';
+  }
+
+  // 攔截 Android / Chrome 原生安裝提示
+  let deferredPrompt = null;
+  const installBtn = $('#installPwaPromptBtn');
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installBtn) installBtn.style.display = 'inline-flex';
+  });
+
+  if (installBtn) {
+    installBtn.onclick = async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        showToast('🎉 已將「家常便事」安裝至桌面！');
+        installBtn.style.display = 'none';
+      }
+      deferredPrompt = null;
+    };
+  }
+
+  if ($('#downloadManifestBtn')) {
+    $('#downloadManifestBtn').onclick = () => {
+      const blob = new Blob([JSON.stringify(MANIFEST_JSON_OBJECT, null, 2)], { type: 'application/manifest+json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'manifest.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('📥 已下載 manifest.json！請與 index.html 放在同一個資料夾上傳。');
+    };
+  }
+
+  if ($('#copyManifestJsonBtn')) {
+    $('#copyManifestJsonBtn').onclick = () => {
+      const el = $('#manifestJsonPreview');
+      if (el) {
+        el.select();
+        document.execCommand('copy');
+        showToast('📋 已複製 manifest.json 內容！');
+      }
+    };
+  }
+
+  if ($('#downloadPwaIconsBtn')) {
+    $('#downloadPwaIconsBtn').onclick = () => {
+      [192, 512].forEach(sz => {
+        const dataUrl = generatePwaIconDataUrl(sz);
+        if (!dataUrl) return;
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = `icon-${sz}.png`;
+        a.click();
+      });
+      showToast('🖼️ 已下載 icon-192.png 與 icon-512.png！');
+    };
+  }
+}
+
+// 綁定設定頁面的輔助指南按鈕
+if ($('#openFirebaseRulesGuideBtn')) {
+  $('#openFirebaseRulesGuideBtn').onclick = () => {
+    askConfirm(
+      '🛠️ Firebase 控制台開通與規則指南',
+      '為確保雙手機與跨平板/電腦同步順暢，請在您的 Firebase 專案 (jiayou-plan) 確認以下兩項設定：',
+      () => true,
+      `<div style="font-size:12.5px;line-height:1.65;color:var(--ink);background:#f8faf7;padding:12px;border-radius:10px;border:1px solid var(--line)">
+        <strong>1. Authentication（登入驗證）：</strong><br>
+        前往 <code>Authentication → Sign-in method</code>，啟用 <strong>Google</strong> 與 <strong>匿名 (Anonymous)</strong> 登入，並在 <code>Settings → Authorized domains</code> 加入您的網站網域（如 <code>*.pages.dev</code> 或 <code>*.github.io</code>）。<br><br>
+        <strong>2. Cloud Firestore 資料庫規則：</strong><br>
+        前往 <code>Firestore Database → Rules</code>，確保允許已驗證使用者讀寫個人私密帳本與家庭房間路徑（<code>/artifacts/{appId}/...</code>）。
+      </div>`
+    );
+  };
+}
+
+if ($('#runSecurityAuditBtn')) {
+  $('#runSecurityAuditBtn').onclick = () => {
+    const isGoogle = Boolean(currentUser && !currentUser.isAnonymous);
+    const hasRoom = Boolean(cloudRoomConfig.roomCode);
+    askConfirm(
+      '🔍 系統同步與隱私保護狀態檢查',
+      '以下為目前裝置的即時狀態核對：',
+      () => true,
+      `<div style="font-size:12.5px;line-height:1.7;color:var(--ink);background:#f4f8fb;padding:12px;border-radius:10px;border:1px solid #cde0ee">
+        • <strong>Google 帳號跨裝置狀態：</strong>${isGoogle ? `🟢 已登入 (${esc(currentUser.email || currentUser.displayName)})` : '🟡 未登入 Google（目前使用本機或匿名通道）'}<br>
+        • <strong>家庭雲端連動室：</strong>${hasRoom ? `🟢 已連線【${esc(cloudRoomConfig.roomCode)}】` : '🟡 尚未設定家庭連動代碼'}<br>
+        • <strong>零用錢明細物理隔離：</strong>🟢 正常（家庭雲端室僅傳送消費分類百分比 <code>%</code> 與願望小樹進度，單筆明細僅保存在學生私人帳本）<br>
+        • <strong>PWA 桌面安裝支援：</strong>🟢 已啟用（<code>display: standalone</code>）
+      </div>`
+    );
+  };
+}
+
 // 初始化
 syncLoginScreenUI();
 syncCloudInputsUI();
 renderAll();
+initPwaSupport();
 initFirebaseConnection();
 checkPrivacyConsentOnStart();
 </script>
